@@ -53,6 +53,7 @@ target_sources(iso15118
         d20/state/dc_charge_loop.cpp
         d20/state/dc_welding_detection.cpp
         d20/state/session_stop.cpp
+        d20/state/acdp_vehicle_positioning.cpp
 
         message/variant.cpp
         message/supported_app_protocol.cpp
@@ -71,6 +72,7 @@ target_sources(iso15118
         message/dc_charge_loop.cpp
         message/dc_welding_detection.cpp
         message/session_stop.cpp
+        message/acdp_vehicle_positioning.cpp
 
         tbd_controller.cpp    
 )
