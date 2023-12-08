@@ -18,6 +18,7 @@ enum class Signal {
     DLINK_TERMINATE,
     DLINK_ERROR,
     DLINK_PAUSE,
+    START_VEHICLE_POSITIONING,
 };
 
 struct DcChargeTarget {
