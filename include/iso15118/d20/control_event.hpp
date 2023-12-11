@@ -64,8 +64,21 @@ private:
     bool success;
 };
 
+class ACDPConnectFinished {
+public:
+    explicit ACDPConnectFinished(bool success_) : success(success_) {
+    }
+
+    operator bool() const {
+        return success;
+    }
+
+private:
+    bool success;
+};
+
 using ControlEvent =
-    std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, DcTransferLimits, VehiclePositioningFinished>;
+    std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, DcTransferLimits, VehiclePositioningFinished, ACDPConnectFinished>;
 
 
 } // namespace iso15118::d20

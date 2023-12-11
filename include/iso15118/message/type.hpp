@@ -44,6 +44,8 @@ enum class Type {
     AC_ChargeLoopRes,
     ACDP_VehiclePositioningReq,
     ACDP_VehiclePositioningRes,
+    ACDP_ConnectReq,
+    ACDP_ConnectRes,
 };
 
 template <typename T> struct TypeTrait {
@@ -102,6 +104,7 @@ CREATE_TYPE_TRAIT(AC_ChargeParameterDiscoveryResponse, AC_ChargeParameterDiscove
 CREATE_TYPE_TRAIT(AC_ChargeLoopRequest, AC_ChargeLoopReq);
 CREATE_TYPE_TRAIT(AC_ChargeLoopResponse, AC_ChargeLoopRes);
 CREATE_TYPE_TRAIT(ACDP_VehiclePositioningRequest, ACDP_VehiclePositioningReq);
+CREATE_TYPE_TRAIT(ACDP_ConnectRequest, ACDP_ConnectReq);
 
 #ifdef CREATE_TYPE_TRAIT_PUSHED
 #define CREATE_TYPE_TRAIT CREATE_TYPE_TRAIT_PUSHED

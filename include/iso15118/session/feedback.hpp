@@ -23,6 +23,7 @@ enum class Signal {
     DLINK_ERROR,
     DLINK_PAUSE,
     START_VEHICLE_POSITIONING,
+    START_ACDP_CONNECT,
 };
 
 struct DcChargeTarget {
