@@ -40,6 +40,7 @@ CREATE_TYPE_TRAIT(DC_WeldingDetectionResponse, Part20DC);
 CREATE_TYPE_TRAIT(SessionStopResponse, Part20Main);
 CREATE_TYPE_TRAIT(ACDP_VehiclePositioningResponse, Part20ACDP);
 CREATE_TYPE_TRAIT(ACDP_ConnectResponse, Part20ACDP);
+CREATE_TYPE_TRAIT(ACDP_DisconnectResponse, Part20ACDP);
 
 #ifdef CREATE_TYPE_TRAIT_PUSHED
 #define CREATE_TYPE_TRAIT CREATE_TYPE_TRAIT_PUSHED

@@ -254,4 +254,18 @@ RationalNumber from_float(float in);
 
 std::string from_Protocol(const Protocol& in);
 
+typedef enum {
+    electricalChargingDeviceStatusType_State_A = 0,
+    electricalChargingDeviceStatusType_State_B = 1,
+    electricalChargingDeviceStatusType_State_C = 2,
+    electricalChargingDeviceStatusType_State_D = 3
+} electricalChargingDeviceStatusType;
+
+typedef enum {
+    mechanicalChargingDeviceStatusType_Home = 0,
+    mechanicalChargingDeviceStatusType_Moving = 1,
+    mechanicalChargingDeviceStatusType_EndPosition = 2
+} mechanicalChargingDeviceStatusType;
+
+
 } // namespace iso15118::message_20

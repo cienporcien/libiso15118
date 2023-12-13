@@ -42,6 +42,8 @@ enum class Type {
     ACDP_VehiclePositioningRes,
     ACDP_ConnectReq,
     ACDP_ConnectRes,
+    ACDP_DisconnectReq,
+    ACDP_DisconnectRes,
 };
 
 template <typename T> struct TypeTrait {
@@ -82,6 +84,7 @@ CREATE_TYPE_TRAIT(DC_WeldingDetectionRequest, DC_WeldingDetectionReq);
 CREATE_TYPE_TRAIT(SessionStopRequest, SessionStopReq);
 CREATE_TYPE_TRAIT(ACDP_VehiclePositioningRequest, ACDP_VehiclePositioningReq);
 CREATE_TYPE_TRAIT(ACDP_ConnectRequest, ACDP_ConnectReq);
+CREATE_TYPE_TRAIT(ACDP_DisconnectRequest, ACDP_DisconnectReq);
 
 #ifdef CREATE_TYPE_TRAIT_PUSHED
 #define CREATE_TYPE_TRAIT CREATE_TYPE_TRAIT_PUSHED
