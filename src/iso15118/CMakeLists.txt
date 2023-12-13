@@ -47,6 +47,7 @@ target_sources(iso15118
         d20/state/session_stop.cpp
         d20/state/acdp_vehicle_positioning.cpp
         d20/state/acdp_connect.cpp
+        d20/state/acdp_disconnect.cpp
 
         message/variant.cpp
         message/supported_app_protocol.cpp
@@ -69,6 +70,7 @@ target_sources(iso15118
         message/ac_charge_loop.cpp
         message/acdp_vehicle_positioning.cpp
         message/acdp_connect.cpp
+        message/acdp_disconnect.cpp
 
         tbd_controller.cpp    
 )
