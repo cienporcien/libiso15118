@@ -26,6 +26,7 @@ template <> void convert(const ACDP_ConnectResponse& in, struct iso20_acdp_ACDP_
     cb_convert_enum(in.response_code, out.ResponseCode);
     cb_convert_enum(in.processing, out.EVSEProcessing);
     cb_convert_enum(in.EVSEElectricalChargingDeviceStatus,out.EVSEElectricalChargingDeviceStatus);
+    cb_convert_enum(in.EVSEMechanicalChargingDeviceStatus,out.EVSEMechanicalChargingDeviceStatus);
 }
 
 template <> int serialize_to_exi(const ACDP_ConnectResponse& in, exi_bitstream_t& out) {
