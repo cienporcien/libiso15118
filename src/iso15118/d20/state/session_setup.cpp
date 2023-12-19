@@ -4,6 +4,7 @@
 
 #include <iso15118/d20/state/authorization_setup.hpp>
 #include <iso15118/d20/state/session_setup.hpp>
+#include <iso15118/d20/state/acdp_connect.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
 #include <iso15118/detail/d20/state/session_setup.hpp>
@@ -62,7 +63,7 @@ FsmSimpleState::HandleEventReturnType SessionSetup::handle_event(AllocatorType& 
 
         ctx.respond(res);
 
-        return sa.create_simple<AuthorizationSetup>(ctx);
+        return sa.create_simple<ACDP_Connect>(ctx);
 
         // Todo(sl): Going straight to ChargeParameterDiscovery?
 
