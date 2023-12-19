@@ -37,6 +37,9 @@ target_sources(cb_iso20
         iso-20/iso20_DC_Datatypes.c  
         iso-20/iso20_DC_Decoder.c 
         iso-20/iso20_DC_Encoder.c
+        iso-20/iso20_ACDP_Datatypes.c  
+        iso-20/iso20_ACDP_Decoder.c 
+        iso-20/iso20_ACDP_Encoder.c
 )
 
 target_include_directories(cb_iso20

@@ -20,10 +20,10 @@
   **/
 #include <stdint.h>
 
-#include "exi_basetypes.h"
-#include "exi_basetypes_encoder.h"
-#include "exi_error_codes.h"
-#include "exi_header.h"
+#include "common/exi_basetypes.h"
+#include "common/exi_basetypes_encoder.h"
+#include "common/exi_error_codes.h"
+#include "common/exi_header.h"
 #include "iso20_ACDP_Datatypes.h"
 #include "iso20_ACDP_Encoder.h"
 
@@ -5717,16 +5717,16 @@ static int encode_iso20_acdp_SignaturePropertiesType(exi_bitstream_t* stream, co
 int encode_iso20_acdp_exiDocument(exi_bitstream_t* stream, struct iso20_acdp_exiDocument* exiDoc)
 {
     int error = exi_header_write(stream);
-        if (true)
+    if (1)
+    {
+        // encode event 0
+        error = exi_basetypes_encoder_nbit_uint(stream, 6, 0);
+        if (error == EXI_ERROR__NO_ERROR)
         {
-            // encode event 0
-            error = exi_basetypes_encoder_nbit_uint(stream, 6, 0);
-            if (error == EXI_ERROR__NO_ERROR)
-            {
-                struct iso20_acdp_ACDP_ConnectReqType MyACDP_ConnectReq;
-                error = encode_iso20_acdp_ACDP_ConnectReqType(stream, MyACDP_ConnectReq);
-            }
+            struct iso20_acdp_ACDP_ConnectReqType MyACDP_ConnectReq;
+            error = encode_iso20_acdp_ACDP_ConnectReqType(stream, &MyACDP_ConnectReq);
         }
+    }
     if (error == EXI_ERROR__NO_ERROR)
     {
         if (exiDoc->ACDP_ConnectReq_isUsed == 1)
