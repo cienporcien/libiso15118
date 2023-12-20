@@ -12,6 +12,7 @@
 #include <cbv2g/iso_20/iso20_AC_Decoder.h>
 #include <cbv2g/iso_20/iso20_CommonMessages_Decoder.h>
 #include <cbv2g/iso_20/iso20_DC_Decoder.h>
+#include <cbv2g/iso_20/iso20_ACDP_Decoder.h>
 
 using PayloadType = iso15118::io::v2gtp::PayloadType;
 
@@ -111,6 +112,29 @@ static void handle_ac(VariantAccess& va) {
     }
 }
 
+
+static void handle_acdp(VariantAccess& va) {
+    iso20_acdp_exiDocument doc;
+
+    const auto decode_status = decode_iso20_acdp_exiDocument(&va.input_stream, &doc);
+
+    if (decode_status != 0) {
+        va.error = "decode_iso20_acdp_exiDocument failed with " + std::to_string(decode_status);
+        return;
+    }
+
+    if (doc.ACDP_VehiclePositioningReq_isUsed) {
+        insert_type(va, doc.ACDP_VehiclePositioningReq);
+    } else if (doc.ACDP_ConnectReq_isUsed) {
+        insert_type(va, doc.ACDP_ConnectReq);
+    } else if (doc.ACDP_DisconnectReq_isUsed) {
+        insert_type(va, doc.ACDP_DisconnectReq);
+    } else {
+        va.error = "chosen message type unhandled";
+    }
+}
+
+
 Variant::Variant(io::v2gtp::PayloadType payload_type, const io::StreamInputView& buffer_view) {
 
     VariantAccess va{
@@ -125,6 +149,8 @@ Variant::Variant(io::v2gtp::PayloadType payload_type, const io::StreamInputView&
         handle_dc(va);
     } else if (payload_type == PayloadType::Part20AC) {
         handle_ac(va);
+    } else if (payload_type == PayloadType::Part20ACDP) {
+        handle_acdp(va);
     } else {
         logf_warning("Unknown type\n");
     }
