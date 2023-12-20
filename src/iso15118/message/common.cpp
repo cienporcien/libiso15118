@@ -9,6 +9,7 @@
 
 #include <exi/cb/iso20_CommonMessages_Datatypes.h>
 #include <exi/cb/iso20_DC_Datatypes.h>
+#include <exi/cb/iso20_ACDP_Datatypes.h>
 
 namespace iso15118::message_20 {
 
@@ -22,6 +23,8 @@ template <typename cb_HeaderType> void convert(const cb_HeaderType& in, Header& 
 
 template void convert(const struct iso20_MessageHeaderType& in, Header& out);
 template void convert(const struct iso20_dc_MessageHeaderType& in, Header& out);
+template void convert(const struct iso20_acdp_MessageHeaderType& in, Header& out);
+
 
 template <typename cb_HeaderType> void convert_header(const Header& in, cb_HeaderType& out) {
     out.TimeStamp = in.timestamp;
@@ -38,6 +41,11 @@ template <> void convert(const Header& in, iso20_MessageHeaderType& out) {
 
 template <> void convert(const Header& in, iso20_dc_MessageHeaderType& out) {
     init_iso20_dc_MessageHeaderType(&out);
+    convert_header(in, out);
+}
+
+template <> void convert(const Header& in, iso20_acdp_MessageHeaderType& out) {
+    init_iso20_acdp_MessageHeaderType(&out);
     convert_header(in, out);
 }
 
