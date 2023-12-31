@@ -6,6 +6,10 @@
 
 namespace iso15118::message_20 {
 
+//hack to get a json string for JOSEV
+char * generate_json_ACDP_VehiclePositioningReq();
+
+
 struct ACDP_VehiclePositioningRequest {
     Header header;
     // EVMobilityStatus, boolean

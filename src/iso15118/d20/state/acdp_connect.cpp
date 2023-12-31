@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
 #include <iso15118/d20/state/acdp_connect.hpp>
+#include <iso15118/message/acdp_connect.hpp>
+
 #include <iso15118/d20/state/dc_cable_check.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
@@ -73,6 +75,7 @@ FsmSimpleState::HandleEventReturnType ACDP_Connect::handle_event(AllocatorType& 
         }
     } else {
         ctx.log("expected ACDP_ConnectReq! But code type id: %d", variant->get_type());
+        iso15118::message_20::generate_json_ACDP_ConnectReq();
         ctx.session_stopped = true;
         return sa.PASS_ON;
     }

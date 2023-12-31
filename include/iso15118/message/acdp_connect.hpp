@@ -6,6 +6,8 @@
 
 namespace iso15118::message_20 {
 
+//hack to get a json string for JOSEV
+char * generate_json_ACDP_ConnectReq();
 
 struct ACDP_ConnectRequest {
     Header header;

@@ -13,16 +13,23 @@ message_20::ACDP_VehiclePositioningResponse handle_request(const message_20::ACD
                                                  const d20::Session& session, bool vehicle_positioning_done) {
 
     message_20::ACDP_VehiclePositioningResponse res;
-
-    if (validate_and_setup_header(res.header, session, req.header.session_id) == false) {
+//Hack, force sessionid since it isn't in the bogus req.
+    if (validate_and_setup_header(res.header, session, session.get_id()) == false) {
         return response_with_code(res, message_20::ResponseCode::FAILED_UnknownSession);
     }
 
-    if (vehicle_positioning_done) {
+    if (!vehicle_positioning_done) {
         res.processing = message_20::Processing::Ongoing;
     } else {
         res.processing = message_20::Processing::Finished;
     }
+
+    res.ContactWindowXc=0;
+    res.ContactWindowYc=0;
+    res.EVInChargePosition=true;
+    res.EVRelativeXDeviation=0;
+    res.EVRelativeYDeviation=0;
+    res.EVSEPositioningSupport=true;
 
     return response_with_code(res, message_20::ResponseCode::OK);
 }
@@ -49,6 +56,9 @@ FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(Allo
         return sa.PASS_ON;
     }
 
+//hack force done.
+vehicle_positioning_done=true;
+
     const auto variant = ctx.get_request();
 
     if (const auto req = variant->get_if<message_20::ACDP_VehiclePositioningRequest>()) {
@@ -73,6 +83,7 @@ FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(Allo
         }
     } else {
         ctx.log("expected ACDP_VehiclePositioningReq! But code type id: %d", variant->get_type());
+        iso15118::message_20::generate_json_ACDP_VehiclePositioningReq();
         ctx.session_stopped = true;
         return sa.PASS_ON;
     }
