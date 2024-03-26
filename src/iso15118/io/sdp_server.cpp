@@ -30,7 +30,7 @@ static void log_peer_hostname(const struct sockaddr_in6& address) {
 namespace io {
 
 SdpServer::SdpServer() {
-    fd = socket(AF_INET6, SOCK_DGRAM, 0);
+    fd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
 
     if (fd == -1) {
         log_and_throw("Failed to open socket");
@@ -42,6 +42,13 @@ SdpServer::SdpServer() {
     socket_address.sin6_family = AF_INET6;
     socket_address.sin6_port = htobe16(v2gtp::SDP_SERVER_PORT);
     memcpy(&socket_address.sin6_addr, &in6addr_any, sizeof(socket_address.sin6_addr));
+
+    // Set the socket options
+    int enable = 1;
+
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(enable)) == -1) {
+        log_and_throw("Failed to set socket options");
+    }
 
     const auto bind_result =
         bind(fd, reinterpret_cast<const struct sockaddr*>(&socket_address), sizeof(socket_address));

@@ -38,6 +38,10 @@ enum class Type {
     DC_WeldingDetectionRes,
     SessionStopReq,
     SessionStopRes,
+    AC_ChargeParameterDiscoveryReq,
+    AC_ChargeParameterDiscoveryRes,
+    AC_ChargeLoopReq,
+    AC_ChargeLoopRes,
     ACDP_VehiclePositioningReq,
     ACDP_VehiclePositioningRes,
     ACDP_ConnectReq,
@@ -82,6 +86,8 @@ CREATE_TYPE_TRAIT(PowerDeliveryRequest, PowerDeliveryReq);
 CREATE_TYPE_TRAIT(DC_ChargeLoopRequest, DC_ChargeLoopReq);
 CREATE_TYPE_TRAIT(DC_WeldingDetectionRequest, DC_WeldingDetectionReq);
 CREATE_TYPE_TRAIT(SessionStopRequest, SessionStopReq);
+CREATE_TYPE_TRAIT(AC_ChargeParameterDiscoveryRequest, AC_ChargeParameterDiscoveryReq);
+CREATE_TYPE_TRAIT(AC_ChargeLoopRequest, AC_ChargeLoopReq);
 CREATE_TYPE_TRAIT(ACDP_VehiclePositioningRequest, ACDP_VehiclePositioningReq);
 CREATE_TYPE_TRAIT(ACDP_ConnectRequest, ACDP_ConnectReq);
 CREATE_TYPE_TRAIT(ACDP_DisconnectRequest, ACDP_DisconnectReq);

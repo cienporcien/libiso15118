@@ -36,6 +36,19 @@ private:
     bool authorized;
 };
 
+class StopCharging {
+public:
+    explicit StopCharging(bool stop_) : stop(stop_) {
+    }
+
+    operator bool() const {
+        return stop;
+    }
+
+private:
+    bool stop;
+};
+
 class VehiclePositioningFinished {
 public:
     explicit VehiclePositioningFinished(bool success_) : success(success_) {
@@ -75,6 +88,6 @@ private:
     bool success;
 };
 
-using ControlEvent = std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished>;
+using ControlEvent = std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished>;
 
 } // namespace iso15118::d20

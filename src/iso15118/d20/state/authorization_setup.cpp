@@ -25,7 +25,7 @@ handle_request(const message_20::AuthorizationSetupRequest& req, d20::Session& s
 
     res.certificate_installation_service = cert_install_service;
 
-    if (authorization_services.empty()) {
+    if (true){//authorization_services.empty()) {
         logf("Warning: authorization_services was not set. Setting EIM as auth_mode\n");
         res.authorization_services = {message_20::Authorization::EIM};
     } else {
@@ -34,7 +34,7 @@ handle_request(const message_20::AuthorizationSetupRequest& req, d20::Session& s
 
     session.offered_services.auth_services = res.authorization_services;
 
-    if (res.authorization_services.size() == 1 && res.authorization_services[0] == message_20::Authorization::EIM) {
+    if (true){//res.authorization_services.size() == 1 && res.authorization_services[0] == message_20::Authorization::EIM) {
         res.authorization_mode.emplace<message_20::AuthorizationSetupResponse::EIM_ASResAuthorizationMode>();
     } else {
         auto& pnc_auth_mode =

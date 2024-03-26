@@ -74,6 +74,8 @@ target_sources(iso15118
         message/dc_charge_loop.cpp
         message/dc_welding_detection.cpp
         message/session_stop.cpp
+        message/ac_charge_parameter_discovery.cpp
+        message/ac_charge_loop.cpp
         message/acdp_vehicle_positioning.cpp
         message/acdp_connect.cpp
         message/acdp_disconnect.cpp

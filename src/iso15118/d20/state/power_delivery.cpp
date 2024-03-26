@@ -25,6 +25,10 @@ message_20::PowerDeliveryResponse handle_request(const message_20::PowerDelivery
         return response_with_code(res, message_20::ResponseCode::WARNING_StandbyNotAllowed);
     }
 
+    if (req.charge_progress == message_20::PowerDeliveryRequest::Progress::Stop) {
+        logf("Handled Power DeliveryReq with Progress: false\n");
+    }
+
     return response_with_code(res, message_20::ResponseCode::OK);
 }
 
