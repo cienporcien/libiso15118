@@ -1,4 +1,4 @@
-ISO 15118 library suite
+ISO 15118-20 library suite with ACDP
 =======================
 
 Currently, this is a proof of concept library.
