@@ -19,9 +19,9 @@ message_20::ACDP_VehiclePositioningResponse handle_request(const message_20::ACD
     }
 
     if (vehicle_positioning_done) {
-        res.processing = message_20::Processing::Ongoing;
-    } else {
         res.processing = message_20::Processing::Finished;
+    } else {
+        res.processing = message_20::Processing::Ongoing;
     }
 
     return response_with_code(res, message_20::ResponseCode::OK);
@@ -55,6 +55,9 @@ FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(Allo
         if (not vehicle_positioning_initiated) {
             ctx.feedback.signal(session::feedback::Signal::START_VEHICLE_POSITIONING);
             vehicle_positioning_initiated = true;
+
+            //RDB TODO fix this up to work properly.
+            vehicle_positioning_done=true;
         }
 
         const auto res = handle_request(*req, ctx.session, vehicle_positioning_done);

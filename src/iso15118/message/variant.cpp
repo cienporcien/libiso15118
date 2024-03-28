@@ -128,7 +128,32 @@ static void handle_acdp(VariantAccess& va) {
     } else if (doc.ACDP_ConnectReq_isUsed) {
         insert_type(va, doc.ACDP_ConnectReq);
     } else if (doc.ACDP_DisconnectReq_isUsed) {
-        insert_type(va, doc.ACDP_DisconnectReq);
+        // RDB this is a little tricky here. The type of doc.ACDP_DisconnectRes is exactly the same as doc.ACDP_ConnectRes
+        //     struct iso20_acdp_exiDocument {
+        // union {
+        //     struct iso20_acdp_ACDP_VehiclePositioningReqType ACDP_VehiclePositioningReq;
+        //     struct iso20_acdp_ACDP_VehiclePositioningResType ACDP_VehiclePositioningRes;
+        //     struct iso20_acdp_ACDP_ConnectReqType ACDP_ConnectReq;
+        //     struct iso20_acdp_ACDP_ConnectResType ACDP_ConnectRes;
+        //     struct iso20_acdp_ACDP_ConnectReqType ACDP_DisconnectReq;
+        //     struct iso20_acdp_ACDP_ConnectResType ACDP_DisconnectRes;
+        // This means that it is impossible to differentiate between the two based on the type (which is what this does)
+        // e.g.
+        // template <> void insert_type(VariantAccess& va, const struct iso20_acdp_ACDP_ConnectReqType& in) {
+        //     va.insert_type<ACDP_DisconnectRequest>(in);
+        // } is the same as:
+        // template <> void insert_type(VariantAccess& va, const struct iso20_acdp_ACDP_ConnectReqType& in) {
+        //     va.insert_type<ACDP_ConnectRequest>(in);
+        // }
+        // and we get a duplicate function error when trying to link. 
+
+        // To fix this, create a new type called 
+        //struct iso20_acdp_ACDP_DisconnectResType and copy everything to it and try again.        
+        struct iso20_acdp_ACDP_DisconnectReqType DT;
+        DT.EVElectricalChargingDeviceStatus = doc.ACDP_DisconnectReq.EVElectricalChargingDeviceStatus;
+        DT.Header = doc.ACDP_DisconnectRes.Header;
+        insert_type(va, DT);
+      
     } else {
         va.error = "chosen message type unhandled";
     }

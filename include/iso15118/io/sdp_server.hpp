@@ -6,6 +6,7 @@
 #include <string>
 
 #include <netinet/in.h>
+#include <string>
 
 #include "ipv6_endpoint.hpp"
 #include "sdp.hpp"
@@ -21,6 +22,11 @@ struct PeerRequestContext {
     operator bool() const {
         return valid;
     }
+    //RDB add the additional properties for Wireless SDP
+    v2gtp::P2PS_PPD p2ps_ppd;
+    v2gtp::CouplingType coupling_type;
+    std::string EVID; //20 ASCII characters
+    std::string EVSEID; //36 ASCII characters
 
 private:
     const bool valid;
@@ -30,8 +36,8 @@ class SdpServer {
 public:
     SdpServer();
     ~SdpServer();
-    PeerRequestContext get_peer_request();
-    void send_response(const PeerRequestContext&, const Ipv6EndPoint&);
+    PeerRequestContext get_peer_request(const bool IsWireless);
+    void send_response(const PeerRequestContext&, const Ipv6EndPoint&, const bool IsWireless);
 
     auto get_fd() const {
         return fd;
@@ -40,6 +46,9 @@ public:
 private:
     int fd{-1};
     uint8_t udp_buffer[2048];
+    //Convert EVID and EVSEID in a reasonable manner to a buffer
+    void convert_id(uint8_t *out, const std::string in, const int length, const std::string defaultID);
+
 };
 
 class TlsKeyLoggingServer {

@@ -865,6 +865,30 @@ struct iso20_acdp_ACDP_ConnectResType {
 
 };
 
+// RDB fix for issue with ConnectRes/Req and DisconnectRes/Req having the same xsd
+struct iso20_acdp_ACDP_DisconnectReqType {
+    // Header, MessageHeaderType
+    struct iso20_acdp_MessageHeaderType Header;
+    // EVElectricalChargingDeviceStatus, electricalChargingDeviceStatusType (base: string)
+    iso20_acdp_electricalChargingDeviceStatusType EVElectricalChargingDeviceStatus;
+
+};
+
+struct iso20_acdp_ACDP_DisconnectResType {
+    // Header, MessageHeaderType
+    struct iso20_acdp_MessageHeaderType Header;
+    // ResponseCode, responseCodeType (base: string)
+    iso20_acdp_responseCodeType ResponseCode;
+    // EVSEProcessing, processingType (base: string)
+    iso20_acdp_processingType EVSEProcessing;
+    // EVSEElectricalChargingDeviceStatus, electricalChargingDeviceStatusType (base: string)
+    iso20_acdp_electricalChargingDeviceStatusType EVSEElectricalChargingDeviceStatus;
+    // EVSEMechanicalChargingDeviceStatus, mechanicalChargingDeviceStatusType (base: string)
+    iso20_acdp_mechanicalChargingDeviceStatusType EVSEMechanicalChargingDeviceStatus;
+
+};
+
+
 // Element: definition=complex; name={urn:iso:std:iso:15118:-20:ACDP}ACDP_SystemStatusReq; type={urn:iso:std:iso:15118:-20:ACDP}ACDP_SystemStatusReqType; base type=V2GRequestType; content type=ELEMENT-ONLY;
 //          abstract=False; final=False; derivation=extension;
 // Particle: Header, MessageHeaderType (1, 1); EVTechnicalStatus, EVTechnicalStatusType (1, 1);

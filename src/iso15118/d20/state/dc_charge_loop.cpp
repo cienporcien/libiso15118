@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
 #include <iso15118/d20/state/dc_charge_loop.hpp>
-#include <iso15118/d20/state/dc_welding_detection.hpp>
+#include <iso15118/d20/state/acdp_disconnect.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
 #include <iso15118/detail/d20/state/dc_charge_loop.hpp>
@@ -161,7 +161,9 @@ FsmSimpleState::HandleEventReturnType DC_ChargeLoop::handle_event(AllocatorType&
         if (req->charge_progress == message_20::PowerDeliveryRequest::Progress::Stop) {
             ctx.feedback.signal(session::feedback::Signal::CHARGE_LOOP_FINISHED);
             ctx.feedback.signal(session::feedback::Signal::DC_OPEN_CONTACTOR);
-            return sa.create_simple<DC_WeldingDetection>(ctx);
+
+            //RDB ACDP goes to ACDP_Disconnect here. There is no welding detection in ACDP.
+            return sa.create_simple<ACDP_Disconnect>(ctx);
         }
 
         return sa.HANDLED_INTERNALLY;

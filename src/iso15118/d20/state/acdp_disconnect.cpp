@@ -18,7 +18,7 @@ message_20::ACDP_DisconnectResponse handle_request(const message_20::ACDP_Discon
         return response_with_code(res, message_20::ResponseCode::FAILED_UnknownSession);
     }
 
-    if (acdp_disconnect_done) {
+    if (!acdp_disconnect_done) {
         res.processing = message_20::Processing::Ongoing;
     } else {
         res.processing = message_20::Processing::Finished;
@@ -55,6 +55,9 @@ FsmSimpleState::HandleEventReturnType ACDP_Disconnect::handle_event(AllocatorTyp
         if (not acdp_disconnect_initiated) {
             ctx.feedback.signal(session::feedback::Signal::START_ACDP_DISCONNECT);
             acdp_disconnect_initiated = true;
+
+            //RDB fix this correctly
+            acdp_disconnect_done = true;
         }
 
         const auto res = handle_request(*req, ctx.session, acdp_disconnect_done);

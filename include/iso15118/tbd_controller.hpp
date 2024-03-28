@@ -7,6 +7,16 @@
 #include <string>
 #include <vector>
 
+//RDB for the check_wireless method
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <linux/wireless.h>
+
 #include "config.hpp"
 #include <iso15118/d20/config.hpp>
 #include <iso15118/d20/control_event.hpp>
@@ -51,6 +61,8 @@ private:
     const session::feedback::Callbacks callbacks;
 
     d20::EvseSetupConfig evse_setup;
+    //True if the ifname is wireless
+    int check_wireless(const char* ifname, char* protocol);
 };
 
 } // namespace iso15118

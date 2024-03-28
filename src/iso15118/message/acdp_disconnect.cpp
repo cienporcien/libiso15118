@@ -11,13 +11,13 @@
 
 namespace iso15118::message_20 {
 
-template <> void convert(const struct iso20_acdp_ACDP_ConnectReqType& in, ACDP_DisconnectRequest& out) {
+template <> void convert(const struct iso20_acdp_ACDP_DisconnectReqType& in, ACDP_DisconnectRequest& out) {
     convert(in.Header, out.header);
     cb_convert_enum(in.EVElectricalChargingDeviceStatus,out.EVElectricalChargingDeviceStatus);
 }
 
-template <> void insert_type(VariantAccess& va, const struct iso20_acdp_ACDP_ConnectReqType& in) {
-    va.insert_type<ACDP_DisconnectRequest>(in);
+template <> void insert_type(VariantAccess& va, const struct iso20_acdp_ACDP_DisconnectReqType& in) {
+     va.insert_type<ACDP_DisconnectRequest>(in);
 }
 
 template <> void convert(const ACDP_DisconnectResponse& in, struct iso20_acdp_ACDP_ConnectResType& out) {
@@ -41,7 +41,7 @@ template <> int serialize_to_exi(const ACDP_DisconnectResponse& in, exi_bitstrea
     return encode_iso20_acdp_exiDocument(&out, &doc);
 }
 
-template <> size_t serialize(const ACDP_ConnectResponse& in, const io::StreamOutputView& out) {
+template <> size_t serialize(const ACDP_DisconnectResponse& in, const io::StreamOutputView& out) {
     return serialize_helper(in, out);
 }
 

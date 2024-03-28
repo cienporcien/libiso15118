@@ -84,7 +84,15 @@ void TbdController::update_dc_limits(const d20::DcTransferLimits& limits) {
 }
 
 void TbdController::handle_sdp_server_input() {
-    auto request = sdp_server->get_peer_request();
+
+    //RDB Check here if the interface is wireless, and handle SDP differently if so.
+    char protocol[IFNAMSIZ]  = {0};
+    bool IsWireless = true;//false; //invert logic for testing on a wired if
+    if(check_wireless(config.interface_name.c_str(),protocol) == 1){
+        IsWireless = false;//true;
+    }  
+    
+    auto request = sdp_server.get_peer_request(IsWireless);
 
     if (not request) {
         return;
@@ -114,7 +122,29 @@ void TbdController::handle_sdp_server_input() {
 
     session = std::make_unique<Session>(std::move(connection), std::move(d20::SessionConfig(evse_setup)), callbacks);
 
-    sdp_server->send_response(request, ipv6_endpoint);
+    sdp_server.send_response(request, ipv6_endpoint, IsWireless);
+}
+
+
+int TbdController::check_wireless(const char* ifname, char* protocol) {
+  int sock = -1;
+  struct iwreq pwrq;
+  memset(&pwrq, 0, sizeof(pwrq));
+  strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+
+  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    perror("socket");
+    return 0;
+  }
+
+  if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
+    if (protocol) strncpy(protocol, pwrq.u.name, IFNAMSIZ);
+    close(sock);
+    return 1;
+  }
+
+  close(sock);
+  return 0;
 }
 
 } // namespace iso15118
