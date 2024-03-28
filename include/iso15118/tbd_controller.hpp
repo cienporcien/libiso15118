@@ -5,6 +5,16 @@
 #include <list>
 #include <memory>
 
+//RDB for the check_wireless method
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <linux/wireless.h>
+
 #include "config.hpp"
 #include "d20/control_event.hpp"
 #include "io/poll_manager.hpp"
@@ -47,6 +57,9 @@ private:
 
     const TbdConfig config;
     const session::feedback::Callbacks callbacks;
+
+    //True if the ifname is wireless
+    int check_wireless(const char* ifname, char* protocol);
 };
 
 } // namespace iso15118

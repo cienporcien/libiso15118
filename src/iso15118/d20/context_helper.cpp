@@ -51,6 +51,9 @@ void send_sequence_error(const message_20::Type req_type, d20::Context& ctx) {
     if (req_type == message_20::Type::SessionSetupReq) {
         const auto res = handle_sequence_error<message_20::SessionSetupResponse>(ctx.session);
         ctx.respond(res);
+    // } else if (req_type == message_20::Type::ACDP_VehiclePositioningReq) {
+    //     const auto res = handle_sequence_error<message_20::ACDP_VehiclePositioningResponse>(ctx.session);
+    //     ctx.respond(res);        
     } else if (req_type == message_20::Type::AuthorizationSetupReq) {
         const auto res = handle_sequence_error<message_20::AuthorizationSetupResponse>(ctx.session);
         ctx.respond(res);
@@ -72,6 +75,9 @@ void send_sequence_error(const message_20::Type req_type, d20::Context& ctx) {
     } else if (req_type == message_20::Type::ScheduleExchangeReq) {
         const auto res = handle_sequence_error<message_20::ScheduleExchangeResponse>(ctx.session);
         ctx.respond(res);
+    // } else if (req_type == message_20::Type::ACDP_Connect) {
+    //     const auto res = handle_sequence_error<message_20::ACDP_ConnectResponse>(ctx.session);
+    //     ctx.respond(res);          
     } else if (req_type == message_20::Type::DC_CableCheckReq) {
         const auto res = handle_sequence_error<message_20::DC_CableCheckResponse>(ctx.session);
         ctx.respond(res);
@@ -84,6 +90,9 @@ void send_sequence_error(const message_20::Type req_type, d20::Context& ctx) {
     } else if (req_type == message_20::Type::DC_ChargeLoopReq) {
         const auto res = handle_sequence_error<message_20::DC_ChargeLoopResponse>(ctx.session);
         ctx.respond(res);
+    // } else if (req_type == message_20::Type::ACDP_DisconnectReq) {
+    //     const auto res = handle_sequence_error<message_20::ACDP_DisconnectResponse>(ctx.session);
+    //     ctx.respond(res);          
     } else if (req_type == message_20::Type::DC_WeldingDetectionReq) {
         const auto res = handle_sequence_error<message_20::DC_WeldingDetectionResponse>(ctx.session);
         ctx.respond(res);

@@ -65,7 +65,8 @@ SdpServer::~SdpServer() {
     }
 }
 
-PeerRequestContext SdpServer::get_peer_request() {
+//RDB this needs to be changed to adapt for a Wireless request.
+PeerRequestContext SdpServer::get_peer_request(const bool IsWireless) {
     decltype(PeerRequestContext::address) peer_address;
     socklen_t peer_addr_len = sizeof(peer_address);
 
@@ -82,14 +83,20 @@ PeerRequestContext SdpServer::get_peer_request() {
     log_peer_hostname(peer_address);
 
     if (read_result == sizeof(udp_buffer)) {
-        logf("Read on sdp server socket succeeded, but message is to big for the buffer");
+        logf("Read on sdp server socket succeeded, but message is too big for the buffer");
         return PeerRequestContext{false};
     }
 
     uint32_t sdp_payload_len;
-    const auto parse_sdp_result = V2GTP20_ReadHeader(udp_buffer, &sdp_payload_len, V2GTP20_SDP_REQUEST_PAYLOAD_ID);
+    int parse_sdp_result;
+    if (!IsWireless) {
+        parse_sdp_result = V2GTP20_ReadHeader(udp_buffer, &sdp_payload_len, V2GTP20_SDP_REQUEST_PAYLOAD_ID);
+    } else {
+        parse_sdp_result = V2GTP20_ReadHeader(udp_buffer, &sdp_payload_len, V2GTP20_SDP_REQUEST_WIRELESS_PAYLOAD_ID);
+    }
 
     if (parse_sdp_result != V2GTP_ERROR__NO_ERROR) {
+
         // FIXME (aw): we should not die here immediately
         logf("Sdp server received an unexpected payload");
         return PeerRequestContext{false};
@@ -104,12 +111,35 @@ PeerRequestContext SdpServer::get_peer_request() {
     peer_request.transport_protocol = static_cast<v2gtp::TransportProtocol>(sdp_request_byte2);
     memcpy(&peer_request.address, &peer_address, sizeof(peer_address));
 
+    //RDB get the Wireless SDP info
+    if (IsWireless) {
+        const uint8_t sdp_request_byte3 = udp_buffer[10];
+        const uint8_t sdp_request_byte4 = udp_buffer[11];
+        peer_request.p2ps_ppd = static_cast<v2gtp::P2PS_PPD>(sdp_request_byte4);
+        const uint8_t sdp_request_byte5 = udp_buffer[12];
+        peer_request.coupling_type=static_cast<v2gtp::CouplingType>(sdp_request_byte5);
+        //The next 20 bytes are the EVID
+        peer_request.EVID.assign(reinterpret_cast<char *>(&udp_buffer[13]),20);
+        //The next 36 bytes are the EVSEID
+        peer_request.EVSEID.assign(reinterpret_cast<char *>(&udp_buffer[33]),36);
+    }
+
     return peer_request;
 }
 
-void SdpServer::send_response(const PeerRequestContext& request, const Ipv6EndPoint& ipv6_endpoint) {
+void SdpServer::send_response(const PeerRequestContext& request, const Ipv6EndPoint& ipv6_endpoint, const bool IsWireless) {
+    //RDB Fix up to also handle wireless response.
     // that worked, now response
-    uint8_t v2g_packet[28];
+    uint8_t v2g_packet_plc[20];
+    uint8_t v2g_packet_wireless[60];
+    uint8_t* v2g_packet;
+
+    if (IsWireless) {
+        v2g_packet = v2g_packet_wireless;
+    } else {
+        v2g_packet = v2g_packet_plc;
+    }
+
     uint8_t* sdp_response = v2g_packet + 8;
     memcpy(sdp_response, ipv6_endpoint.address, sizeof(ipv6_endpoint.address));
 
@@ -118,15 +148,68 @@ void SdpServer::send_response(const PeerRequestContext& request, const Ipv6EndPo
 
     // FIXME (aw): which values to take here?
     sdp_response[18] = static_cast<std::underlying_type_t<v2gtp::Security>>(request.security);
-    sdp_response[19] =
-        static_cast<std::underlying_type_t<v2gtp::TransportProtocol>>(request.transport_protocol);
+    sdp_response[19] = static_cast<std::underlying_type_t<v2gtp::TransportProtocol>>(request.transport_protocol);
 
-    V2GTP20_WriteHeader(v2g_packet, 20, V2GTP20_SDP_RESPONSE_PAYLOAD_ID);
+    if (!IsWireless) {
+        V2GTP20_WriteHeader(v2g_packet, 20, V2GTP20_SDP_RESPONSE_PAYLOAD_ID);
 
-    const auto peer_addr_len = sizeof(request.address);
+        const auto peer_addr_len = sizeof(request.address);
 
-    sendto(fd, v2g_packet, sizeof(v2g_packet), 0, reinterpret_cast<const sockaddr*>(&request.address),
-           peer_addr_len);
+        sendto(fd, v2g_packet_plc, sizeof(v2g_packet_plc), 0, reinterpret_cast<const sockaddr*>(&request.address),
+               peer_addr_len);
+    } else {
+        // Add the rest of the wireless info
+        // Next is the DiagStatus (1 byte)
+        // RDB TODO figure out how to do this properly. Basically wait for the PPD.
+        sdp_response[20] =
+            static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::finished_with_EVSEID);
+
+        // Then the CouplingType
+        uint16_t _coupling_type = static_cast<std::underlying_type_t<v2gtp::CouplingType>>(request.coupling_type);
+        sdp_response[21] = (uint8_t)(_coupling_type & 0xFFu);
+
+        // Finally the EVSEID (36 characters)
+        // We will right justify and pad 0 to the left of a string less than 36 characters, and
+        // take the first 36 characters if more than 36.
+        // RDB TODO do this properly.
+        convert_id(&sdp_response[22], "+49*DEF*E123ABC", 36, "");
+
+        V2GTP20_WriteHeader(v2g_packet, 60, V2GTP20_SDP_RESPONSE_WIRELESS_PAYLOAD_ID);
+
+        const auto peer_addr_len = sizeof(request.address);
+
+        sendto(fd, v2g_packet_wireless, sizeof(v2g_packet_wireless), 0,
+               reinterpret_cast<const sockaddr*>(&request.address), peer_addr_len);
+    }
+}
+
+// Converts EVID and EVSEID according to 15118-20:
+//  Then the EVID (must be length characters, or defaultID if not known [V2G20-2281])
+//  We will right justify and pad 0 to the left of a string less than length characters, and
+//  take the first length characters if more than length.
+void SdpServer::convert_id(uint8_t *out, const std::string in, const int length, const std::string defaultID)
+{
+    std::string tstring = in;
+
+    if(tstring.empty()==true){
+        tstring = defaultID;
+    }
+    //truncate
+    if (tstring.length() > length)
+    {
+        tstring.resize(length);
+    }
+    else
+    {
+        // Right justify and pad with 0s
+        tstring.insert(tstring.begin(), length - tstring.length(), '0');
+    }
+
+    // copy the length chars to the out
+    for (int i = 0; i < length; i++)
+    {
+        out[i] = tstring[i];
+    }
 }
 
 #if 0
