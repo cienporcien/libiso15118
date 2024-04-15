@@ -44,6 +44,10 @@ public:
 
     void setup_session(const std::vector<message_20::Authorization>& auth_services, bool cert_install_service);
 
+    //True if the PPD is within the CPS of this chargepoint
+    bool Is_PPD_in_CPS = false;
+
+
 private:
     io::PollManager poll_manager;
     io::SdpServer sdp_server;
@@ -60,6 +64,7 @@ private:
 
     //True if the ifname is wireless
     int check_wireless(const char* ifname, char* protocol);
+
 };
 
 } // namespace iso15118

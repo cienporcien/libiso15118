@@ -8,6 +8,7 @@
 
 #include <iso15118/io/connection_plain.hpp>
 #include <iso15118/io/connection_ssl.hpp>
+#include <iso15118/io/ipv6_endpoint.hpp>
 #include <iso15118/session/iso.hpp>
 
 #include <iso15118/detail/helper.hpp>
@@ -74,6 +75,7 @@ void TbdController::handle_sdp_server_input() {
     if(check_wireless(config.interface_name.c_str(),protocol) == 1){
         IsWireless = false;//true;
     }  
+
     
     auto request = sdp_server.get_peer_request(IsWireless);
 
@@ -81,32 +83,47 @@ void TbdController::handle_sdp_server_input() {
         return;
     }
 
-    switch (config.tls_negotiation_strategy) {
-    case config::TlsNegotiationStrategy::ACCEPT_CLIENT_OFFER:
-        // nothing to change
-        break;
-    case config::TlsNegotiationStrategy::ENFORCE_TLS:
-        request.security = io::v2gtp::Security::TLS;
-        break;
-    case config::TlsNegotiationStrategy::ENFORCE_NO_TLS:
-        request.security = io::v2gtp::Security::NO_TRANSPORT_SECURITY;
-        break;
-    }
+    // RDB Here we get the PPD position, and see if the Pairing and Positioning Device (PPD) is within the Communications Pairing Space (CPS)
+    // If so, we can continue as usual, if not we simply ignore this sdp request.
+    if (Is_PPD_in_CPS) {
+ 
 
-    auto connection = [this](bool secure_connection) -> std::unique_ptr<io::IConnection> {
-        if (secure_connection) {
-            return std::make_unique<io::ConnectionSSL>(poll_manager, config.interface_name, config.ssl);
-        } else {
-            return std::make_unique<io::ConnectionPlain>(poll_manager, config.interface_name);
+        switch (config.tls_negotiation_strategy) {
+        case config::TlsNegotiationStrategy::ACCEPT_CLIENT_OFFER:
+            // nothing to change
+            break;
+        case config::TlsNegotiationStrategy::ENFORCE_TLS:
+            request.security = io::v2gtp::Security::TLS;
+            break;
+        case config::TlsNegotiationStrategy::ENFORCE_NO_TLS:
+            request.security = io::v2gtp::Security::NO_TRANSPORT_SECURITY;
+            break;
         }
-    }(request.security == io::v2gtp::Security::TLS);
 
-    const auto ipv6_endpoint = connection->get_public_endpoint();
+        auto connection = [this](bool secure_connection) -> std::unique_ptr<io::IConnection> {
+            if (secure_connection) {
+                return std::make_unique<io::ConnectionSSL>(poll_manager, config.interface_name, config.ssl);
+            } else {
+                return std::make_unique<io::ConnectionPlain>(poll_manager, config.interface_name);
+            }
+        }(request.security == io::v2gtp::Security::TLS);
 
-    // Todo(sl): Check if session_config is empty
-    const auto& new_session = sessions.emplace_back(std::move(connection), session_config, callbacks);
+        const auto ipv6_endpoint = connection->get_public_endpoint();
 
-    sdp_server.send_response(request, ipv6_endpoint, IsWireless);
+        // Todo(sl): Check if session_config is empty
+        const auto& new_session = sessions.emplace_back(std::move(connection), session_config, callbacks);
+
+        sdp_server.send_response(request, ipv6_endpoint, IsWireless, true);
+    }
+    else{
+
+        io::Ipv6EndPoint null_end_point;
+        bzero(&null_end_point, sizeof(null_end_point));
+
+        // Send an response with DiagStatus=Ongoing, this indicates to the vehicle that the PPD is not within the CPS
+        // and communication cannot start. The vehicle will wait 250ms and try again.
+        sdp_server.send_response(request, null_end_point, IsWireless, false);
+    }
 }
 
 
@@ -130,5 +147,6 @@ int TbdController::check_wireless(const char* ifname, char* protocol) {
   close(sock);
   return 0;
 }
+
 
 } // namespace iso15118
