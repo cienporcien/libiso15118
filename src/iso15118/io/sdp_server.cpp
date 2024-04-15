@@ -124,7 +124,7 @@ PeerRequestContext SdpServer::get_peer_request(const bool IsWireless) {
     return peer_request;
 }
 
-void SdpServer::send_response(const PeerRequestContext& request, const Ipv6EndPoint& ipv6_endpoint, const bool IsWireless) {
+void SdpServer::send_response(const PeerRequestContext& request, const Ipv6EndPoint& ipv6_endpoint, const bool IsWireless, const bool IsFinished) {
     //RDB Fix up to also handle wireless response.
     // that worked, now response
     uint8_t v2g_packet_plc[20];
@@ -222,10 +222,15 @@ ssize_t TlsKeyLoggingServer::send(const char* line) {
     } else {
         // Add the rest of the wireless info
         // Next is the DiagStatus (1 byte)
-        // RDB TODO figure out how to do this properly. Basically wait for the PPD.
-        sdp_response[20] =
-            static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::finished_with_EVSEID);
+        // RDB TODO figure out how to do this properly. Is the PPD within the Communications Pairing Space (CPS) for this charger?
 
+        if (IsFinished) {
+            sdp_response[20] =
+                static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::finished_with_EVSEID);
+        } else {
+            sdp_response[20] =
+            static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::ongoing);
+        }
         // Then the CouplingType
         uint16_t _coupling_type = static_cast<std::underlying_type_t<v2gtp::CouplingType>>(request.coupling_type);
         sdp_response[21] = (uint8_t)(_coupling_type & 0xFFu);

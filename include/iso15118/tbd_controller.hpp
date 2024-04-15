@@ -48,6 +48,10 @@ public:
                                        bool cert_install_service);
     void update_dc_limits(const d20::DcTransferLimits&);
 
+    //True if the PPD is within the CPS of this chargepoint
+    bool Is_PPD_in_CPS = false;
+
+
 private:
     io::PollManager poll_manager;
     std::unique_ptr<io::SdpServer> sdp_server;
@@ -63,6 +67,7 @@ private:
     d20::EvseSetupConfig evse_setup;
     //True if the ifname is wireless
     int check_wireless(const char* ifname, char* protocol);
+
 };
 
 } // namespace iso15118

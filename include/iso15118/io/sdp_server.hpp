@@ -37,7 +37,7 @@ public:
     SdpServer();
     ~SdpServer();
     PeerRequestContext get_peer_request(const bool IsWireless);
-    void send_response(const PeerRequestContext&, const Ipv6EndPoint&, const bool IsWireless);
+    void send_response(const PeerRequestContext&, const Ipv6EndPoint&, const bool IsWireless, const bool IsFinished);
 
     auto get_fd() const {
         return fd;
