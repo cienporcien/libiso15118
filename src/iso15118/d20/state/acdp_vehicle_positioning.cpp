@@ -18,6 +18,11 @@ message_20::ACDP_VehiclePositioningResponse handle_request(const message_20::ACD
         return response_with_code(res, message_20::ResponseCode::FAILED_UnknownSession);
     }
 
+    //Add the PPD Position information to the response
+//    res.EVRelativeXDeviation = 
+//    res.EVRelativeXDeviation = 
+
+
     if (vehicle_positioning_done) {
         res.processing = message_20::Processing::Finished;
     } else {
@@ -33,14 +38,19 @@ void ACDP_VehiclePositioning::enter() {
 
 FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(AllocatorType& sa, FsmEvent ev) {
 
+    // It looks like we need to receive more information about the PPD position here...
     if (ev == FsmEvent::CONTROL_MESSAGE) {
-        const auto control_data = ctx.get_control_event<VehiclePositioningFinished>();
-        if (not control_data) {
-            // FIXME (aw): error handling
-            return sa.HANDLED_INTERNALLY;
-        }
 
-        vehicle_positioning_done = *control_data;
+        if (const auto control_data = ctx.get_control_event<PresentVehiclePosition>()) {
+            ev_relative_x_deviation = control_data->ev_relative_x_deviation;
+            ev_relative_y_deviation = control_data->ev_relative_y_deviation;
+            contact_window_xc = control_data->contact_window_xc;
+            contact_window_yc = control_data->contact_window_yc;
+            evse_positioning_support = control_data->evse_positioning_support;
+            ev_in_charge_position = control_data->ev_in_charge_position;
+        } else {
+            // FIXME (aw): error handling
+        }
 
         return sa.HANDLED_INTERNALLY;
     }
@@ -57,11 +67,29 @@ FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(Allo
             vehicle_positioning_initiated = true;
 
             //RDB TODO fix this up to work properly.
-            vehicle_positioning_done=true;
+            vehicle_positioning_done=false;
         }
 
-        const auto res = handle_request(*req, ctx.session, vehicle_positioning_done);
+        //The vehicle decides when it is in position by setting EVMobilityStatus to true when in position.
+        // or, the vehicle can override the evse by sending EVPositioningSupport=true and EVMobilityStatus=true
+        if (req->EVMobilityStatus == true && ev_in_charge_position == true){
+            vehicle_positioning_done = true;
+        }
 
+        if (req->EVMobilityStatus == true && req->EVPositioningSupport == true){
+            vehicle_positioning_done = true;
+        }
+
+        auto res = handle_request(*req, ctx.session, vehicle_positioning_done);
+
+        //Easier to access the data here than passing everything to the handle_request...
+        res.ContactWindowXc = contact_window_xc;
+        res.ContactWindowYc = contact_window_yc;
+        res.EVRelativeXDeviation = ev_relative_x_deviation;
+        res.EVRelativeYDeviation = ev_relative_y_deviation;
+        res.EVSEPositioningSupport = evse_positioning_support;
+        res.EVInChargePosition = ev_in_charge_position;
+ 
         ctx.respond(res);
 
         if (res.response_code >= message_20::ResponseCode::FAILED) {

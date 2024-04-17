@@ -26,6 +26,12 @@ template <> void convert(const ACDP_VehiclePositioningResponse& in, struct iso20
     convert(in.header, out.Header);
     cb_convert_enum(in.response_code, out.ResponseCode);
     cb_convert_enum(in.processing, out.EVSEProcessing);
+    out.ContactWindowXc = in.ContactWindowXc;
+    out.ContactWindowYc = in.ContactWindowYc;
+    out.EVInChargePosition = in.EVInChargePosition;
+    out.EVRelativeXDeviation = in.EVRelativeXDeviation;
+    out.EVRelativeYDeviation = in.EVRelativeYDeviation;
+    out.EVSEPositioningSupport = in.EVSEPositioningSupport;
 }
 
 template <> int serialize_to_exi(const ACDP_VehiclePositioningResponse& in, exi_bitstream_t& out) {
