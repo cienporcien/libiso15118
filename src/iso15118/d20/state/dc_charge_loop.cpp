@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
 #include <iso15118/d20/state/dc_charge_loop.hpp>
-#include <iso15118/d20/state/acdp_disconnect.hpp>
+#include <iso15118/d20/state/acds_disconnect.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
 #include <iso15118/detail/d20/state/dc_charge_loop.hpp>
@@ -114,8 +114,8 @@ FsmSimpleState::HandleEventReturnType DC_ChargeLoop::handle_event(AllocatorType&
             ctx.feedback.signal(session::feedback::Signal::CHARGE_LOOP_FINISHED);
             ctx.feedback.signal(session::feedback::Signal::DC_OPEN_CONTACTOR);
 
-            //RDB ACDP goes to ACDP_Disconnect here. There is no welding detection in ACDP.
-            return sa.create_simple<ACDP_Disconnect>(ctx);
+            //RDB ACDS goes to ACDS_Disconnect here. There is no welding detection in ACDS.
+            return sa.create_simple<ACDS_Disconnect>(ctx);
         }
 
         return sa.HANDLED_INTERNALLY;

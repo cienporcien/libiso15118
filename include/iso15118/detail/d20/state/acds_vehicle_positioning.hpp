@@ -3,11 +3,11 @@
 #pragma once
 
 #include <iso15118/d20/session.hpp>
-#include <iso15118/message/acdp_vehicle_positioning.hpp>
+#include <iso15118/message/acds_vehicle_positioning.hpp>
 
 namespace iso15118::d20::state {
 
-message_20::ACDP_VehiclePositioningResponse handle_request(const message_20::ACDP_VehiclePositioningRequest& req,
+message_20::ACDS_VehiclePositioningResponse handle_request(const message_20::ACDS_VehiclePositioningRequest& req,
                                                  const d20::Session& session, bool vehicle_positioning_done);
 
 } // namespace iso15118::d20::state

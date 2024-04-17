@@ -3,20 +3,20 @@
 #pragma once
 
 #include "common.hpp"
+#include "acds_connect.hpp"
 
 namespace iso15118::message_20 {
 
 
-struct ACDP_ConnectRequest {
+struct ACDS_DisconnectRequest {
     Header header;
     electricalChargingDeviceStatusType EVElectricalChargingDeviceStatus;
 };
 
 
+struct ACDS_DisconnectResponse {
 
-struct ACDP_ConnectResponse {
-
-    ACDP_ConnectResponse() : processing(Processing::Ongoing){};
+    ACDS_DisconnectResponse() : processing(Processing::Ongoing){};
 
     Header header;
     ResponseCode response_code;

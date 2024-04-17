@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
-#include <iso15118/d20/state/acdp_disconnect.hpp>
-#include <iso15118/d20/state/session_stop.hpp>
+#include <iso15118/d20/state/acds_connect.hpp>
+#include <iso15118/d20/state/dc_cable_check.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
-#include <iso15118/detail/d20/state/acdp_disconnect.hpp>
+#include <iso15118/detail/d20/state/acds_connect.hpp>
 #include <iso15118/detail/helper.hpp>
 
 namespace iso15118::d20::state {
 
-message_20::ACDP_DisconnectResponse handle_request(const message_20::ACDP_DisconnectRequest& req,
-                                                 const d20::Session& session, bool acdp_disconnect_done) {
+message_20::ACDS_ConnectResponse handle_request(const message_20::ACDS_ConnectRequest& req,
+                                                 const d20::Session& session, bool acds_connect_done) {
 
-    message_20::ACDP_DisconnectResponse res;
+    message_20::ACDS_ConnectResponse res;
 
     if (validate_and_setup_header(res.header, session, req.header.session_id) == false) {
         return response_with_code(res, message_20::ResponseCode::FAILED_UnknownSession);
     }
 
-    if (!acdp_disconnect_done) {
+    if (!acds_connect_done) {
         res.processing = message_20::Processing::Ongoing;
     } else {
         res.processing = message_20::Processing::Finished;
@@ -27,20 +27,20 @@ message_20::ACDP_DisconnectResponse handle_request(const message_20::ACDP_Discon
     return response_with_code(res, message_20::ResponseCode::OK);
 }
 
-void ACDP_Disconnect::enter() {
-    ctx.log.enter_state("ACDP_Disconnect");
+void ACDS_Connect::enter() {
+    ctx.log.enter_state("ACDS_Connect");
 }
 
-FsmSimpleState::HandleEventReturnType ACDP_Disconnect::handle_event(AllocatorType& sa, FsmEvent ev) {
+FsmSimpleState::HandleEventReturnType ACDS_Connect::handle_event(AllocatorType& sa, FsmEvent ev) {
 
     if (ev == FsmEvent::CONTROL_MESSAGE) {
-        const auto control_data = ctx.get_control_event<ACDPDisconnectFinished>();
+        const auto control_data = ctx.get_control_event<ACDSConnectFinished>();
         if (not control_data) {
             // FIXME (aw): error handling
             return sa.HANDLED_INTERNALLY;
         }
 
-        acdp_disconnect_done = *control_data;
+        acds_connect_done = *control_data;
 
         return sa.HANDLED_INTERNALLY;
     }
@@ -51,16 +51,17 @@ FsmSimpleState::HandleEventReturnType ACDP_Disconnect::handle_event(AllocatorTyp
 
     const auto variant = ctx.get_request();
 
-    if (const auto req = variant->get_if<message_20::ACDP_DisconnectRequest>()) {
-        if (not acdp_disconnect_initiated) {
-            ctx.feedback.signal(session::feedback::Signal::START_ACDP_DISCONNECT);
-            acdp_disconnect_initiated = true;
+    if (const auto req = variant->get_if<message_20::ACDS_ConnectRequest>()) {
+        if (not acds_connect_initiated) {
+            ctx.feedback.signal(session::feedback::Signal::START_ACDS_CONNECT);
+            acds_connect_initiated = true;
 
             //RDB fix this correctly
-            acdp_disconnect_done = true;
+            acds_connect_done = true;
+
         }
 
-        const auto res = handle_request(*req, ctx.session, acdp_disconnect_done);
+        const auto res = handle_request(*req, ctx.session, acds_connect_done);
 
         ctx.respond(res);
 
@@ -69,13 +70,13 @@ FsmSimpleState::HandleEventReturnType ACDP_Disconnect::handle_event(AllocatorTyp
             return sa.PASS_ON;
         }
 
-        if (acdp_disconnect_done) {
-            return sa.create_simple<SessionStop>(ctx);
+        if (acds_connect_done) {
+            return sa.create_simple<DC_CableCheck>(ctx);
         } else {
             return sa.HANDLED_INTERNALLY;
         }
     } else {
-        ctx.log("expected ACDP_DisconnectReq! But code type id: %d", variant->get_type());
+        ctx.log("expected ACDS_ConnectReq! But code type id: %d", variant->get_type());
         ctx.session_stopped = true;
         return sa.PASS_ON;
     }

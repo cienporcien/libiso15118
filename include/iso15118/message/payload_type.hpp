@@ -40,9 +40,9 @@ CREATE_TYPE_TRAIT(DC_WeldingDetectionResponse, Part20DC);
 CREATE_TYPE_TRAIT(SessionStopResponse, Part20Main);
 CREATE_TYPE_TRAIT(AC_ChargeParameterDiscoveryResponse, Part20AC);
 CREATE_TYPE_TRAIT(AC_ChargeLoopResponse, Part20AC);
-CREATE_TYPE_TRAIT(ACDP_VehiclePositioningResponse, Part20ACDP);
-CREATE_TYPE_TRAIT(ACDP_ConnectResponse, Part20ACDP);
-CREATE_TYPE_TRAIT(ACDP_DisconnectResponse, Part20ACDP);
+CREATE_TYPE_TRAIT(ACDS_VehiclePositioningResponse, Part20ACDS);
+CREATE_TYPE_TRAIT(ACDS_ConnectResponse, Part20ACDS);
+CREATE_TYPE_TRAIT(ACDS_DisconnectResponse, Part20ACDS);
 
 #ifdef CREATE_TYPE_TRAIT_PUSHED
 #define CREATE_TYPE_TRAIT CREATE_TYPE_TRAIT_PUSHED

@@ -42,12 +42,12 @@ enum class Type {
     AC_ChargeParameterDiscoveryRes,
     AC_ChargeLoopReq,
     AC_ChargeLoopRes,
-    ACDP_VehiclePositioningReq,
-    ACDP_VehiclePositioningRes,
-    ACDP_ConnectReq,
-    ACDP_ConnectRes,
-    ACDP_DisconnectReq,
-    ACDP_DisconnectRes,
+    ACDS_VehiclePositioningReq,
+    ACDS_VehiclePositioningRes,
+    ACDS_ConnectReq,
+    ACDS_ConnectRes,
+    ACDS_DisconnectReq,
+    ACDS_DisconnectRes,
 };
 
 template <typename T> struct TypeTrait {
@@ -88,9 +88,9 @@ CREATE_TYPE_TRAIT(DC_WeldingDetectionRequest, DC_WeldingDetectionReq);
 CREATE_TYPE_TRAIT(SessionStopRequest, SessionStopReq);
 CREATE_TYPE_TRAIT(AC_ChargeParameterDiscoveryRequest, AC_ChargeParameterDiscoveryReq);
 CREATE_TYPE_TRAIT(AC_ChargeLoopRequest, AC_ChargeLoopReq);
-CREATE_TYPE_TRAIT(ACDP_VehiclePositioningRequest, ACDP_VehiclePositioningReq);
-CREATE_TYPE_TRAIT(ACDP_ConnectRequest, ACDP_ConnectReq);
-CREATE_TYPE_TRAIT(ACDP_DisconnectRequest, ACDP_DisconnectReq);
+CREATE_TYPE_TRAIT(ACDS_VehiclePositioningRequest, ACDS_VehiclePositioningReq);
+CREATE_TYPE_TRAIT(ACDS_ConnectRequest, ACDS_ConnectReq);
+CREATE_TYPE_TRAIT(ACDS_DisconnectRequest, ACDS_DisconnectReq);
 
 #ifdef CREATE_TYPE_TRAIT_PUSHED
 #define CREATE_TYPE_TRAIT CREATE_TYPE_TRAIT_PUSHED

@@ -68,7 +68,7 @@ bool Session::find_parameter_set_id(const message_20::ServiceCategory service, i
         }
 
     default:
-        // Todo(sl): logf AC, WPT, ACDP is not supported
+        // Todo(sl): logf AC, WPT, ACDS is not supported
         break;
     }
 
@@ -125,7 +125,7 @@ void Session::selected_service_parameters(const message_20::ServiceCategory serv
         break;
 
     default:
-        // Todo(sl): logf AC, WPT, ACDP is not supported
+        // Todo(sl): logf AC, WPT, ACDS is not supported
         break;
     }
 }

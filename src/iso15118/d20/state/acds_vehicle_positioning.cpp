@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
-#include <iso15118/d20/state/acdp_vehicle_positioning.hpp>
+#include <iso15118/d20/state/acds_vehicle_positioning.hpp>
 #include <iso15118/d20/state/authorization_setup.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
-#include <iso15118/detail/d20/state/acdp_vehicle_positioning.hpp>
+#include <iso15118/detail/d20/state/acds_vehicle_positioning.hpp>
 #include <iso15118/detail/helper.hpp>
 
 namespace iso15118::d20::state {
 
-message_20::ACDP_VehiclePositioningResponse handle_request(const message_20::ACDP_VehiclePositioningRequest& req,
+message_20::ACDS_VehiclePositioningResponse handle_request(const message_20::ACDS_VehiclePositioningRequest& req,
                                                  const d20::Session& session, bool vehicle_positioning_done) {
 
-    message_20::ACDP_VehiclePositioningResponse res;
+    message_20::ACDS_VehiclePositioningResponse res;
 
     if (validate_and_setup_header(res.header, session, req.header.session_id) == false) {
         return response_with_code(res, message_20::ResponseCode::FAILED_UnknownSession);
@@ -32,11 +32,11 @@ message_20::ACDP_VehiclePositioningResponse handle_request(const message_20::ACD
     return response_with_code(res, message_20::ResponseCode::OK);
 }
 
-void ACDP_VehiclePositioning::enter() {
-    ctx.log.enter_state("ACDP_VehiclePositioning");
+void ACDS_VehiclePositioning::enter() {
+    ctx.log.enter_state("ACDS_VehiclePositioning");
 }
 
-FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(AllocatorType& sa, FsmEvent ev) {
+FsmSimpleState::HandleEventReturnType ACDS_VehiclePositioning::handle_event(AllocatorType& sa, FsmEvent ev) {
 
     // It looks like we need to receive more information about the PPD position here...
     if (ev == FsmEvent::CONTROL_MESSAGE) {
@@ -61,7 +61,7 @@ FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(Allo
 
     const auto variant = ctx.get_request();
 
-    if (const auto req = variant->get_if<message_20::ACDP_VehiclePositioningRequest>()) {
+    if (const auto req = variant->get_if<message_20::ACDS_VehiclePositioningRequest>()) {
         if (not vehicle_positioning_initiated) {
             ctx.feedback.signal(session::feedback::Signal::START_VEHICLE_POSITIONING);
             vehicle_positioning_initiated = true;
@@ -103,7 +103,7 @@ FsmSimpleState::HandleEventReturnType ACDP_VehiclePositioning::handle_event(Allo
             return sa.HANDLED_INTERNALLY;
         }
     } else {
-        ctx.log("expected ACDP_VehiclePositioningReq! But code type id: %d", variant->get_type());
+        ctx.log("expected ACDS_VehiclePositioningReq! But code type id: %d", variant->get_type());
         ctx.session_stopped = true;
         return sa.PASS_ON;
     }

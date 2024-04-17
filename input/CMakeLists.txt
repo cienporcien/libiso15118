@@ -8,7 +8,7 @@ if (OPT_AUTODOWNLOAD_ISO20_SCHEMAS)
 
     list(APPEND ISO20_SCHEMA_FILES
         V2G_CI_AC.xsd
-        V2G_CI_ACDP.xsd
+        V2G_CI_ACDS.xsd
         V2G_CI_AppProtocol.xsd
         V2G_CI_CommonMessages.xsd
         V2G_CI_CommonTypes.xsd

@@ -6,7 +6,7 @@
 
 namespace iso15118::message_20 {
 
-struct ACDP_VehiclePositioningRequest {
+struct ACDS_VehiclePositioningRequest {
     Header header;
     // EVMobilityStatus, boolean
     int EVMobilityStatus;
@@ -14,9 +14,9 @@ struct ACDP_VehiclePositioningRequest {
     int EVPositioningSupport;
 };
 
-struct ACDP_VehiclePositioningResponse {
+struct ACDS_VehiclePositioningResponse {
 
-    ACDP_VehiclePositioningResponse() : processing(Processing::Ongoing){};
+    ACDS_VehiclePositioningResponse() : processing(Processing::Ongoing){};
 
     Header header;
     ResponseCode response_code;

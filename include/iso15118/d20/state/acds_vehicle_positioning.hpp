@@ -6,7 +6,7 @@
 
 namespace iso15118::d20::state {
 
-struct ACDP_VehiclePositioning : public FsmSimpleState {
+struct ACDS_VehiclePositioning : public FsmSimpleState {
     using FsmSimpleState::FsmSimpleState;
 
     void enter() final;

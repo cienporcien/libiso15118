@@ -876,6 +876,30 @@ struct iso20_acds_ACDS_SystemStatusReqType {
 
 };
 
+// RDB fix for issue with ConnectRes/Req and DisconnectRes/Req having the same xsd
+struct iso20_acds_ACDS_DisconnectReqType {
+    // Header, MessageHeaderType
+    struct iso20_acds_MessageHeaderType Header;
+    // EVElectricalChargingDeviceStatus, electricalChargingDeviceStatusType (base: string)
+    iso20_acds_electricalChargingDeviceStatusType EVElectricalChargingDeviceStatus;
+
+};
+
+struct iso20_acds_ACDS_DisconnectResType {
+    // Header, MessageHeaderType
+    struct iso20_acds_MessageHeaderType Header;
+    // ResponseCode, responseCodeType (base: string)
+    iso20_acds_responseCodeType ResponseCode;
+    // EVSEProcessing, processingType (base: string)
+    iso20_acds_processingType EVSEProcessing;
+    // EVSEElectricalChargingDeviceStatus, electricalChargingDeviceStatusType (base: string)
+    iso20_acds_electricalChargingDeviceStatusType EVSEElectricalChargingDeviceStatus;
+    // EVSEMechanicalChargingDeviceStatus, mechanicalChargingDeviceStatusType (base: string)
+    iso20_acds_mechanicalChargingDeviceStatusType EVSEMechanicalChargingDeviceStatus;
+
+};
+
+
 // Element: definition=complex; name={urn:iso:std:iso:15118:-20:ACDS}ACDS_SystemStatusRes; type={urn:iso:std:iso:15118:-20:ACDS}ACDS_SystemStatusResType; base type=V2GResponseType; content type=ELEMENT-ONLY;
 //          abstract=False; final=False; derivation=extension;
 // Particle: Header, MessageHeaderType (1, 1); ResponseCode, responseCodeType (1, 1); EVSEMechanicalChargingDeviceStatus, mechanicalChargingDeviceStatusType (1, 1); EVSEReadyToCharge, boolean (1, 1); EVSEIsolationStatus, isolationStatusType (1, 1); EVSEDisabled, boolean (1, 1); EVSEUtilityInterruptEvent, boolean (1, 1); EVSEEmergencyShutdown, boolean (1, 1); EVSEMalfunction, boolean (1, 1); EVInChargePosition, boolean (1, 1); EVAssociationStatus, boolean (1, 1);

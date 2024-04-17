@@ -81,10 +81,10 @@ enum class ServiceCategory : uint16_t {
     AC = 1,
     DC = 2,
     WPT = 3,
-    DC_ACDP = 4,
+    DC_ACDS = 4,
     AC_BPT = 5,
     DC_BPT = 6,
-    DC_ACDP_BPT = 7,
+    DC_ACDS_BPT = 7,
     Internet = 65,
     ParkingStatus = 66,
 };

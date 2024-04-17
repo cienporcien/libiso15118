@@ -2,7 +2,7 @@
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
 #include <ctime>
 
-#include <iso15118/d20/state/acdp_connect.hpp>
+#include <iso15118/d20/state/acds_connect.hpp>
 #include <iso15118/d20/state/schedule_exchange.hpp>
 
 #include <iso15118/detail/d20/context_helper.hpp>
@@ -98,8 +98,8 @@ FsmSimpleState::HandleEventReturnType ScheduleExchange::handle_event(AllocatorTy
         if (res.processing == message_20::Processing::Ongoing) {
             return sa.HANDLED_INTERNALLY;
         }
-        //RDB ACDP go to ACDP_Connect
-        return sa.create_simple<ACDP_Connect>(ctx);
+        //RDB ACDS go to ACDS_Connect
+        return sa.create_simple<ACDS_Connect>(ctx);
 
     } else if (const auto req = variant->get_if<message_20::SessionStopRequest>()) {
         const auto res = handle_request(*req, ctx.session);

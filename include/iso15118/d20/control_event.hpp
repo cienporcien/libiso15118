@@ -73,9 +73,9 @@ private:
     bool success;
 };
 
-class ACDPConnectFinished {
+class ACDSConnectFinished {
 public:
-    explicit ACDPConnectFinished(bool success_) : success(success_) {
+    explicit ACDSConnectFinished(bool success_) : success(success_) {
     }
 
     operator bool() const {
@@ -86,9 +86,9 @@ private:
     bool success;
 };
 
-class ACDPDisconnectFinished {
+class ACDSDisconnectFinished {
 public:
-    explicit ACDPDisconnectFinished(bool success_) : success(success_) {
+    explicit ACDSDisconnectFinished(bool success_) : success(success_) {
     }
 
     operator bool() const {
@@ -99,6 +99,6 @@ private:
     bool success;
 };
 
-using ControlEvent = std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, PresentVehiclePosition, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished>;
+using ControlEvent = std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, PresentVehiclePosition, VehiclePositioningFinished, ACDSConnectFinished, ACDSDisconnectFinished>;
 
 } // namespace iso15118::d20

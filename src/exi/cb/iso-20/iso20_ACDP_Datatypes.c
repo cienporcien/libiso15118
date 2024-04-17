@@ -23,7 +23,7 @@
 
 
 // root elements of EXI doc
-void init_iso20_acdp_exiDocument(struct iso20_acdp_exiDocument* exiDoc) {
+void init_iso20_acds_exiDocument(struct iso20_acdp_exiDocument* exiDoc) {
     exiDoc->ACDP_VehiclePositioningReq_isUsed = 0u;
     exiDoc->ACDP_VehiclePositioningRes_isUsed = 0u;
     exiDoc->ACDP_ConnectReq_isUsed = 0u;

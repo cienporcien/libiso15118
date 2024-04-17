@@ -6,7 +6,7 @@
 
 namespace iso15118::d20::state {
 
-struct ACDP_Disconnect : public FsmSimpleState {
+struct ACDS_Connect : public FsmSimpleState {
     using FsmSimpleState::FsmSimpleState;
 
     void enter() final;
@@ -14,8 +14,8 @@ struct ACDP_Disconnect : public FsmSimpleState {
     HandleEventReturnType handle_event(AllocatorType&, FsmEvent) final;
 
 private:
-    bool acdp_disconnect_initiated{false};
-    bool acdp_disconnect_done{false};
+    bool acds_connect_initiated{false};
+    bool acds_connect_done{false};
 };
 
 } // namespace iso15118::d20::stat

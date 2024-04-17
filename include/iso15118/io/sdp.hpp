@@ -22,7 +22,7 @@ enum class PayloadType : uint16_t {
     Part20Main = 0x8002,
     Part20AC = 0x8003,
     Part20DC = 0x8004,
-    Part20ACDP = 0x8005,
+    Part20ACDS = 0x8005,
 };
 
 //RDB Add information for SDP for Wireless
