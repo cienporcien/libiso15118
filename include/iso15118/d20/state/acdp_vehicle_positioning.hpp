@@ -16,6 +16,14 @@ struct ACDP_VehiclePositioning : public FsmSimpleState {
 private:
     bool vehicle_positioning_initiated{false};
     bool vehicle_positioning_done{false};
+
+    bool evse_positioning_support{false};
+    short ev_relative_x_deviation{0};
+    short ev_relative_y_deviation{0};
+    short contact_window_xc{0};
+    short contact_window_yc{0};
+    bool ev_in_charge_position{0};
+
 };
 
 } // namespace iso15118::d20::state

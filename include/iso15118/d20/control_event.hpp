@@ -49,6 +49,17 @@ private:
     bool stop;
 };
 
+struct PresentVehiclePosition {
+    bool evse_positioning_support;
+    short ev_relative_x_deviation;
+    short ev_relative_y_deviation;
+    short contact_window_xc;
+    short contact_window_yc;
+    bool ev_in_charge_position;
+    //short ev_relative_Z_deviation;  //need the Z to indicate whether the reading is good.
+};
+
+
 class VehiclePositioningFinished {
 public:
     explicit VehiclePositioningFinished(bool success_) : success(success_) {
@@ -88,6 +99,6 @@ private:
     bool success;
 };
 
-using ControlEvent = std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished>;
+using ControlEvent = std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, PresentVehiclePosition, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished>;
 
 } // namespace iso15118::d20
