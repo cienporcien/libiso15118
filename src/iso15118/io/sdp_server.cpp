@@ -4,10 +4,11 @@
 
 #include <cstring>
 
+#include <endian.h>
 #include <netdb.h>
 #include <unistd.h>
 
-#include <exi/cb/exi_v2gtp.h>
+#include <cbv2g/exi_v2gtp.h>
 
 #include <iso15118/detail/helper.hpp>
 

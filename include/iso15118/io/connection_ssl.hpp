@@ -34,7 +34,7 @@ private:
 
     ConnectionEventCallback event_callback{nullptr};
 
-    bool handshake_complete {false};
+    bool handshake_complete{false};
 
     void handle_connect();
     void handle_data();

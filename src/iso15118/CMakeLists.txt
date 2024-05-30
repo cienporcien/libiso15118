@@ -1,10 +1,3 @@
-if (TARGET fsm)
-    # FIXME (aw): need to get proper way to deal with dependencies out of edm ...
-else()
-    message(STATUS "Target for libfsm not found, trying sibling folder ../libfsm")
-    add_subdirectory(${PROJECT_SOURCE_DIR}/../libfsm ${CMAKE_CURRENT_BINARY_DIR}/libfsm)
-endif()
-
 find_package(Threads REQUIRED)
 
 add_library(iso15118)
@@ -53,9 +46,6 @@ target_sources(iso15118
         d20/state/dc_charge_loop.cpp
         d20/state/dc_welding_detection.cpp
         d20/state/session_stop.cpp
-        d20/state/acdp_vehicle_positioning.cpp
-        d20/state/acdp_connect.cpp
-        d20/state/acdp_disconnect.cpp
 
         message/variant.cpp
         message/supported_app_protocol.cpp
@@ -76,9 +66,6 @@ target_sources(iso15118
         message/session_stop.cpp
         message/ac_charge_parameter_discovery.cpp
         message/ac_charge_loop.cpp
-        message/acdp_vehicle_positioning.cpp
-        message/acdp_connect.cpp
-        message/acdp_disconnect.cpp
 
         tbd_controller.cpp    
 )
@@ -101,13 +88,13 @@ target_link_libraries(iso15118
     PUBLIC
         # FIXME (aw): would be nice if we could make this private!
         fsm::fsm
+        cb_v2g::V2GTP
+        cb_v2g::ISO20
     PRIVATE
         Threads::Threads
 
         ${MBEDTLS_LINK_DEPENDENCIES}
 
-        iso15118::v2gtp
-        iso15118::exi_20
 )
 
 # FIXME (aw): do we want to have this public here?

@@ -29,7 +29,6 @@ SCENARIO("DC Welding Detection state handling") {
     }
 
     GIVEN("Good Case") {
-        
         auto session = d20::Session();
 
         message_20::DC_WeldingDetectionRequest req;
@@ -43,8 +42,8 @@ SCENARIO("DC Welding Detection state handling") {
 
         THEN("ResponseCode: OK, present_voltage should be 200V") {
             REQUIRE(res.response_code == message_20::ResponseCode::OK);
-            REQUIRE(res.present_voltage.value == 200);
-            REQUIRE(res.present_voltage.exponent == 0);
+            REQUIRE(res.present_voltage.value == 2000);
+            REQUIRE(res.present_voltage.exponent == -1);
         }
     }
 

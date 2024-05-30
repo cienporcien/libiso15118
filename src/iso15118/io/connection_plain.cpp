@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cstring>
 
+#include <endian.h>
 #include <unistd.h>
 
 #include <thread>

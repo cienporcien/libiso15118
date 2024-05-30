@@ -5,6 +5,8 @@
 #include <cassert>
 #include <cstring>
 
+#include <endian.h>
+
 #include <iso15118/d20/state/supported_app_protocol.hpp>
 
 #include <iso15118/detail/helper.hpp>

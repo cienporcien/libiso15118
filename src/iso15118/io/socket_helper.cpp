@@ -4,9 +4,11 @@
 
 #include <cstring>
 
+#include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <netdb.h>
+#include <netinet/in.h>
 
 #include <iso15118/detail/helper.hpp>
 
@@ -31,26 +33,38 @@ bool get_first_sockaddr_in6_for_interface(const std::string& interface_name, soc
             continue;
         }
 
-        if (interface_name.compare(current_if->ifa_name) != 0) {
+        if (interface_name.compare("auto") != 0 && interface_name.compare(current_if->ifa_name) != 0) {
             continue;
         }
 
         // NOTE (aw): because we did the check for AF_INET6, we can assume that ifa_addr is indeed an sockaddr_in6
-        memcpy(&address, current_if->ifa_addr, sizeof(address));
-        found_interface = true;
+        const auto current_addr = reinterpret_cast<const sockaddr_in6*>(current_if->ifa_addr);
+        if (not IN6_IS_ADDR_LINKLOCAL(&(current_addr->sin6_addr))) {
+            continue;
+        }
 
-        // FIXME (aw): this would work, but JOSEV also puts the scope id aka ifname onto unique link addresses
-        // break;
+        if (interface_name == "auto") {
+            logf("Found an ipv6 link local address for interface: %s\n", current_if->ifa_name);
+        }
+
+        memcpy(&address, current_addr, sizeof(address));
+        found_interface = true;
+        break; // Stop the loop if a interface is found
     }
 
     freeifaddrs(if_list_head);
 
+    // Todo(sl): What to do if interface was not found?
     return found_interface;
 }
 
 std::unique_ptr<char[]> sockaddr_in6_to_name(const sockaddr_in6& address) {
-    // 4 chars per 2 bytes, 7 colons, 1 '%' and interface name (note, that IFNAMESIZ already include null termination)
-    static constexpr auto MAX_NUMERIC_NAME_LENGTH = 8 * 4 + 7 * 1 + 1 + IFNAMSIZ;
+    // account for ipv6 address string length plus possible scope/zone
+    // identifier which seems to be an interface name, as both constants
+    // (INET6_ADDRSTRLEN and IFNAMSIZ) include the terminating NULL, we
+    // have one extra character that can account for the separating '%'
+    // between the ipv6 address and the scope/zone identifier
+    static constexpr auto MAX_NUMERIC_NAME_LENGTH = INET6_ADDRSTRLEN + IFNAMSIZ;
     auto name = std::make_unique<char[]>(MAX_NUMERIC_NAME_LENGTH);
 
     // FIXME (aw): what about alignment issues here between casting from sockaddr_in6 to sockaddr?

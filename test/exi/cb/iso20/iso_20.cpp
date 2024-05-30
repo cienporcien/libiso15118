@@ -45,45 +45,13 @@ SCENARIO("ISO15118-20 Ser/Des") {
         }
     }
 
+    // Todo(sl): Missing Decode test case
     // 809004790c8adceeee09688d6cac3a606204031552cc4c8cd14c4c8ccd00
     // {"SessionSetupRes":
     // {   "Header": {"SessionID": "F21915B9DDDC12D1", "TimeStamp": 1691411798},
     //     "ResponseCode": "OK_NewSessionEstablished",
     //     "EVSEID": "UK123E1234"
     // }}
-
-    // GIVEN("A binary representation of an SessionSetupRes document") {
-
-    //     uint8_t doc_raw[] = "\x80\x90\x04\x79\x0c\x8a\xdc\xee\xee\x09\x68\x8d\x6c"
-    //                         "\xac\x3a\x60\x62\x04\x03\x15\x52\xcc\x4c\x8c\xd1\x4c"
-    //                         "\x4c\x8c\xcd\x00";
-
-    //     exi_bitstream_t exi_stream_in;
-    //     size_t pos1 = 0;
-    //     int errn = 0;
-
-    //     exi_bitstream_init(&exi_stream_in, reinterpret_cast<uint8_t*>(doc_raw), sizeof(doc_raw), pos1, nullptr);
-
-    //     THEN("It should be decoded succussfully") {
-
-    //         iso20_exiDocument response;
-    //         init_iso20_exiDocument(&response);
-    //         REQUIRE(decode_iso20_exiDocument(&exi_stream_in, &response) == 0);
-    //         REQUIRE(response.SessionSetupRes_isUsed == true);
-
-    //         iso20_SessionSetupResType session_setup_res = response.SessionSetupRes;
-    //         iso20_MessageHeaderType header = session_setup_res.Header;
-
-    //         REQUIRE(header.SessionID.bytesLen == 8);
-    //         REQUIRE(header.SessionID.bytes[0] == 0xF2);
-    //         REQUIRE(header.SessionID.bytes[7] == 0xD1);
-    //         REQUIRE(header.TimeStamp == 1691411798);
-    //         REQUIRE(header.Signature_isUsed == false);
-
-    //         REQUIRE(session_setup_res.ResponseCode == iso20_responseCodeType_OK_NewSessionEstablished);
-    //         REQUIRE(std::string(session_setup_res.EVSEID.characters) == "UK123E1234");
-    //     }
-    // }
 
     // 800804790c8adceeee09688d6cac3a6062
     // {"AuthorizationSetupReq":{
@@ -111,49 +79,22 @@ SCENARIO("ISO15118-20 Ser/Des") {
         }
     }
 
-    // // 800c04790c8adceeee09688d6cac3a6062000500
-    // // {"AuthorizationSetupRes":
-    // //     {"Header": {"SessionID": "F21915B9DDDC12D1", "TimeStamp": 1691411798},
-    // //     "ResponseCode": "OK",
-    // //     "AuthorizationServices": ["EIM"],
-    // //     "CertificateInstallationService": true,
-    // //     "EIM_ASResAuthorizationMode": {}
-    // // }}
+    // Todo(sl): Missing Decode test case
+    // 800c04790c8adceeee09688d6cac3a6062000500
+    // {"AuthorizationSetupRes":
+    //     {"Header": {"SessionID": "F21915B9DDDC12D1", "TimeStamp": 1691411798},
+    //     "ResponseCode": "OK",
+    //     "AuthorizationServices": ["EIM"],
+    //     "CertificateInstallationService": true,
+    //     "EIM_ASResAuthorizationMode": {}
+    // }}
 
-    // GIVEN("A binary representation of an AuthorizationSetupRes document") {
-
-    //     uint8_t doc_raw[] = "\x80\x0c\x04\x79\x0c\x8a\xdc\xee\xee\x09\x68\x8d\x6c\xac\x3a\x60\x62\x00\x05\x00";
-
-    //     exi_bitstream_t exi_stream_in;
-    //     size_t pos1 = 0;
-    //     int errn = 0;
-
-    //     exi_bitstream_init(&exi_stream_in, reinterpret_cast<uint8_t*>(doc_raw), sizeof(doc_raw), pos1, nullptr);
-
-    //     THEN("It should be decoded succussfully") {
-
-    //         iso20_exiDocument response;
-    //         init_iso20_exiDocument(&response);
-    //         REQUIRE(decode_iso20_exiDocument(&exi_stream_in, &response) == 0);
-    //         REQUIRE(response.AuthorizationSetupRes_isUsed == true);
-
-    //         iso20_AuthorizationSetupResType auth_setup_res = response.AuthorizationSetupRes;
-    //         iso20_MessageHeaderType header = auth_setup_res.Header;
-
-    //         REQUIRE(header.SessionID.bytesLen == 8);
-    //         REQUIRE(header.SessionID.bytes[0] == 0xF2);
-    //         REQUIRE(header.SessionID.bytes[7] == 0xD1);
-    //         REQUIRE(header.TimeStamp == 1691411798);
-    //         REQUIRE(header.Signature_isUsed == false);
-    //     }
-    // }
-
-    // // 800004790c8adceeee09688d6cac3a606200
-    // // {"AuthorizationReq":
-    // //     {"Header":{"SessionID":"F21915B9DDDC12D1","TimeStamp":1691411798},
-    // //     "SelectedAuthorizationService":"EIM",
-    // //     "EIM_AReqAuthorizationMode":{}
-    // // }}
+    // 800004790c8adceeee09688d6cac3a606200
+    // {"AuthorizationReq":
+    //     {"Header":{"SessionID":"F21915B9DDDC12D1","TimeStamp":1691411798},
+    //     "SelectedAuthorizationService":"EIM",
+    //     "EIM_AReqAuthorizationMode":{}
+    // }}
 
     GIVEN("A binary representation of an AuthorizationReq document") {
 
@@ -179,43 +120,13 @@ SCENARIO("ISO15118-20 Ser/Des") {
         }
     }
 
-    // // 800404790c8adceeee09688d6cac3a60620000
-    // // {"AuthorizationRes":
-    // //     {"Header": {"SessionID": "F21915B9DDDC12D1", "TimeStamp": 1691411798},
-    // //     "ResponseCode": "OK",
-    // //     "EVSEProcessing": "Finished"
-    // // }}
-
-    // GIVEN("A binary representation of an AuthorizationRes document") {
-
-    //     uint8_t doc_raw[] = "\x80\x04\x04\x79\x0c\x8a\xdc\xee\xee\x09\x68\x8d\x6c\xac\x3a\x60\x62\x00\x00";
-
-    //     exi_bitstream_t exi_stream_in;
-    //     size_t pos1 = 0;
-    //     int errn = 0;
-
-    //     exi_bitstream_init(&exi_stream_in, reinterpret_cast<uint8_t*>(doc_raw), sizeof(doc_raw), pos1, nullptr);
-
-    //     THEN("It should be decoded succussfully") {
-
-    //         iso20_exiDocument response;
-    //         init_iso20_exiDocument(&response);
-    //         REQUIRE(decode_iso20_exiDocument(&exi_stream_in, &response) == 0);
-    //         REQUIRE(response.AuthorizationRes_isUsed == true);
-
-    //         iso20_AuthorizationResType auth_res = response.AuthorizationRes;
-    //         iso20_MessageHeaderType header = auth_res.Header;
-
-    //         REQUIRE(header.SessionID.bytesLen == 8);
-    //         REQUIRE(header.SessionID.bytes[0] == 0xF2);
-    //         REQUIRE(header.SessionID.bytes[7] == 0xD1);
-    //         REQUIRE(header.TimeStamp == 1691411798);
-    //         REQUIRE(header.Signature_isUsed == false);
-
-    //         REQUIRE(auth_res.ResponseCode == iso20_responseCodeType_OK);
-    //         REQUIRE(auth_res.EVSEProcessing == iso20_processingType_Finished);
-    //     }
-    // }
+    // Todo(sl): Missing Decode test case
+    // 800404790c8adceeee09688d6cac3a60620000
+    // {"AuthorizationRes":
+    //     {"Header": {"SessionID": "F21915B9DDDC12D1", "TimeStamp": 1691411798},
+    //     "ResponseCode": "OK",
+    //     "EVSEProcessing": "Finished"
+    // }}
 
     // 807c040275ff964a2ceda10e387e8a606280
     // {"ServiceDiscoveryReq":{"Header":{"SessionID":"04EBFF2C9459DB42","TimeStamp":1692009443}}}
@@ -315,69 +226,22 @@ SCENARIO("ISO15118-20 Ser/Des") {
         message_20::ScheduleExchangeResponse res;
         res.header.session_id = {0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23};
         res.response_code = message_20::ResponseCode::OK;
-        
         uint8_t serialization_buffer[1024];
         io::StreamOutputView out({serialization_buffer, sizeof(serialization_buffer)});
 
         const auto size = message_20::serialize(res, out);
     }
 
-    // // 801004790c8adceeee09688d6cac3a606288300b220019088300b220019080
-    // // {"AC_ChargeParameterDiscoveryReq":
-    // //     {"Header":{"SessionID":"F21915B9DDDC12D1","TimeStamp":1691411798},
-    // //     "BPT_AC_CPDReqEnergyTransferMode":
-    // //         {"EVMaximumChargePower":{"Exponent":3,"Value":11},
-    // //         "EVMinimumChargePower":{"Exponent":0,"Value":100},
-    // //         "EVMaximumDischargePower":{"Exponent":3,"Value":11},
-    // //         "EVMinimumDischargePower":{"Exponent":0,"Value":100}
-    // //         }
-    // //     }
-    // // }
-
-    // GIVEN("A binary representation of an AC_ChargeParameterDiscoveryReq document") {
-
-    //     uint8_t doc_raw[] = "\x80\x10\x04\x79\x0c\x8a\xdc\xee\xee\x09\x68\x8d\x6c\xac"
-    //                         "\x3a\x60\x62\x88\x30\x0b\x22\x00\x19\x08\x83\x00\xb2\x20"
-    //                         "\x01\x90\x80";
-
-    //     exi_bitstream_t exi_stream_in;
-    //     size_t pos1 = 0;
-    //     int errn = 0;
-
-    //     exi_bitstream_init(&exi_stream_in, reinterpret_cast<uint8_t*>(doc_raw), sizeof(doc_raw), pos1, nullptr);
-
-    //     THEN("It should be decoded succussfully") {
-
-    //         iso20_ac_exiDocument request;
-    //         init_iso20_ac_exiDocument(&request);
-    //         REQUIRE(decode_iso20_ac_exiDocument(&exi_stream_in, &request) == 0);
-    //         REQUIRE(request.AC_ChargeParameterDiscoveryReq_isUsed == true);
-
-    //         iso20_ac_AC_ChargeParameterDiscoveryReqType charge_param_req = request.AC_ChargeParameterDiscoveryReq;
-    //         iso20_ac_MessageHeaderType header = charge_param_req.Header;
-
-    //         REQUIRE(header.SessionID.bytesLen == 8);
-    //         REQUIRE(header.SessionID.bytes[0] == 0xF2);
-    //         REQUIRE(header.SessionID.bytes[7] == 0xD1);
-    //         REQUIRE(header.TimeStamp == 1691411798);
-    //         REQUIRE(header.Signature_isUsed == false);
-
-    //         REQUIRE(charge_param_req.BPT_AC_CPDReqEnergyTransferMode_isUsed == true);
-
-    //         iso20_ac_BPT_AC_CPDReqEnergyTransferModeType ac_bpt_param =
-    //             charge_param_req.BPT_AC_CPDReqEnergyTransferMode;
-
-    //         REQUIRE(ac_bpt_param.EVMaximumChargePower.Value == 11);
-    //         REQUIRE(ac_bpt_param.EVMaximumChargePower.Exponent == 3);
-
-    //         REQUIRE(ac_bpt_param.EVMinimumChargePower.Value == 100);
-    //         REQUIRE(ac_bpt_param.EVMinimumChargePower.Exponent == 0);
-
-    //         REQUIRE(ac_bpt_param.EVMaximumDischargePower.Value == 11);
-    //         REQUIRE(ac_bpt_param.EVMaximumDischargePower.Exponent == 3);
-
-    //         REQUIRE(ac_bpt_param.EVMinimumDischargePower.Value == 100);
-    //         REQUIRE(ac_bpt_param.EVMinimumDischargePower.Exponent == 0);
+    // Todo(sl): Missing Encode test case
+    // 801004790c8adceeee09688d6cac3a606288300b220019088300b220019080
+    // {"AC_ChargeParameterDiscoveryReq":
+    //     {"Header":{"SessionID":"F21915B9DDDC12D1","TimeStamp":1691411798},
+    //     "BPT_AC_CPDReqEnergyTransferMode":
+    //         {"EVMaximumChargePower":{"Exponent":3,"Value":11},
+    //         "EVMinimumChargePower":{"Exponent":0,"Value":100},
+    //         "EVMaximumDischargePower":{"Exponent":3,"Value":11},
+    //         "EVMinimumDischargePower":{"Exponent":0,"Value":100}
+    //         }
     //     }
     // }
 }
