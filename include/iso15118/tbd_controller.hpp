@@ -4,6 +4,7 @@
 
 #include <list>
 #include <memory>
+#include <optional>
 
 //RDB for the check_wireless method
 #include <string.h>
@@ -40,9 +41,13 @@ public:
 
     void send_control_event(const d20::ControlEvent&);
 
-    void setup_config();
+    void setup_config(const std::string&, const std::vector<message_20::ServiceCategory>&);
 
-    void setup_session(const std::vector<message_20::Authorization>& auth_services, bool cert_install_service);
+    void setup_session(const std::vector<message_20::Authorization>&, bool);
+
+    void update_dc_max_values(float, float, float, std::optional<float>, std::optional<float>);
+
+    void update_dc_min_values(float, float, float, std::optional<float>, std::optional<float>);
 
     //True if the PPD is within the CPS of this chargepoint
     bool Is_PPD_in_CPS = false;

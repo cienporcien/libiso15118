@@ -74,21 +74,25 @@ FsmSimpleState::HandleEventReturnType ScheduleExchange::handle_event(AllocatorTy
 
     const auto variant = ctx.get_request();
 
+    const auto v2g_message_type = convert_request_type(variant->get_type());
+    ctx.feedback.v2g_message(v2g_message_type);
+
     if (const auto req = variant->get_if<message_20::ScheduleExchangeRequest>()) {
 
         message_20::RationalNumber max_charge_power = {0, 0};
 
         const auto selected_energy_service = ctx.session.get_selected_energy_service();
 
-        if (selected_energy_service == message_20::ServiceCategory::DC) {
-            max_charge_power = ctx.config.evse_dc_parameter.max_charge_power;
-        } else if (selected_energy_service == message_20::ServiceCategory::DC_BPT) {
-            max_charge_power = ctx.config.evse_dc_bpt_parameter.max_charge_power;
+        if (selected_energy_service == message_20::ServiceCategory::DC ||
+            selected_energy_service == message_20::ServiceCategory::DC_BPT) {
+            max_charge_power = ctx.config.max_charge_power;
         }
 
         const auto res = handle_request(*req, ctx.session, max_charge_power);
 
         ctx.respond(res);
+
+        ctx.feedback.v2g_message(session::feedback::V2gMessageId::ScheduleExchangeRes);
 
         if (res.response_code >= message_20::ResponseCode::FAILED) {
             ctx.session_stopped = true;
@@ -106,6 +110,8 @@ FsmSimpleState::HandleEventReturnType ScheduleExchange::handle_event(AllocatorTy
 
         ctx.respond(res);
         ctx.session_stopped = true;
+
+        ctx.feedback.v2g_message(session::feedback::V2gMessageId::SessionStopRes);
 
         return sa.PASS_ON;
     } else {
