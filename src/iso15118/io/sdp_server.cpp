@@ -2,6 +2,7 @@
 // Copyright 2023 Pionix GmbH and Contributors to EVerest
 #include <iso15118/io/sdp_server.hpp>
 
+#include <net/if.h>
 #include <cstring>
 
 #include <endian.h>
@@ -33,6 +34,13 @@ static void log_peer_hostname(const struct sockaddr_in6& address) {
 
 namespace io {
 
+/* link-local multicast address ff02::1 aka ip6-allnodes */
+#define IN6ADDR_ALLNODES                                                                                               \
+    { 0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01 }
+
+
+//RDB this needs reworking so the SDP request only comes from the selected interface and is in the correct multicast group.
+//See EvseV2G sdp.cpp for an example. TODO: we need to pass in the interface name somehow.
 SdpServer::SdpServer() {
     fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
@@ -52,6 +60,34 @@ SdpServer::SdpServer() {
     if (bind_result == -1) {
         log_and_throw("Failed to bind to socket");
     }
+
+    /* bind only to specified device */
+    //RDB TODO, this needs to come from the config.
+    const char * if_name = "wlx4822542ce527";
+
+   // The group will be ff02::1 (all nodes), and the interface will be the one in config.
+    struct ipv6_mreq mreq = {{IN6ADDR_ALLNODES}, 0};
+ 
+    mreq.ipv6mr_interface = if_nametoindex(if_name);
+    if (!mreq.ipv6mr_interface) {
+        log_and_throw("Unknown Interface");
+    }
+
+    /* join multicast group to receive the multicast from the EV*/
+    if (setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq, sizeof(mreq)) == -1) {
+        close(fd);
+        log_and_throw("setsockopt(IPV6_JOIN_GROUP) failed");
+    }
+
+    //RDB this seems a bit redundant since the multicast group is only on the chosen interface,
+    // but just to make sure we only listen on the chosen interface as well.
+    if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, if_name, strlen(if_name)) ==
+        -1) {
+        close(fd);
+        log_and_throw("setsockopt(SO_BINDTODEVICE) failed");
+    }
+
+
 }
 
 SdpServer::~SdpServer() {

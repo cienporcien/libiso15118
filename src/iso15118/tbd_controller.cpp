@@ -88,9 +88,9 @@ void TbdController::handle_sdp_server_input() {
 
     //RDB Check here if the interface is wireless, and handle SDP differently if so.
     char protocol[IFNAMSIZ]  = {0};
-    bool IsWireless = true;//false; //invert logic for testing on a wired if
+    bool IsWireless = false; //invert logic for testing on a wired if
     if(check_wireless(config.interface_name.c_str(),protocol) == 1){
-        IsWireless = false;//true;
+        IsWireless = true;
     }  
 
     
