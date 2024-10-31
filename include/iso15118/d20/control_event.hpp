@@ -103,7 +103,7 @@ private:
 
 
 using ControlEvent =
-    std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, DcTransferLimits, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished>>;
+    std::variant<CableCheckFinished, PresentVoltageCurrent, AuthorizationResponse, StopCharging, DcTransferLimits, VehiclePositioningFinished, ACDPConnectFinished, ACDPDisconnectFinished, PresentVehiclePosition>;
 
 
 

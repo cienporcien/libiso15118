@@ -94,7 +94,7 @@ void TbdController::handle_sdp_server_input() {
     }  
 
     
-    auto request = sdp_server.get_peer_request(IsWireless);
+    auto request = sdp_server->get_peer_request(IsWireless);
 
     if (not request) {
         return;
@@ -125,13 +125,10 @@ void TbdController::handle_sdp_server_input() {
             }
         }(request.security == io::v2gtp::Security::TLS);
 
-    session = std::make_unique<Session>(std::move(connection), std::move(d20::SessionConfig(evse_setup)), callbacks);
+        session = std::make_unique<Session>(std::move(connection), std::move(d20::SessionConfig(evse_setup)), callbacks);
         const auto ipv6_endpoint = connection->get_public_endpoint();
 
-        // Todo(sl): Check if session_config is empty
-        const auto& new_session = sessions.emplace_back(std::move(connection), session_config, callbacks);
-
-        sdp_server.send_response(request, ipv6_endpoint, IsWireless, true);
+        sdp_server->send_response(request, ipv6_endpoint, IsWireless, true);
     }
     else{
 
@@ -140,7 +137,7 @@ void TbdController::handle_sdp_server_input() {
 
         // Send an response with DiagStatus=Ongoing, this indicates to the vehicle that the PPD is not within the CPS
         // and communication cannot start. The vehicle will wait 250ms and try again.
-        sdp_server.send_response(request, null_end_point, IsWireless, false);
+        sdp_server->send_response(request, null_end_point, IsWireless, false);
     }
 }
 

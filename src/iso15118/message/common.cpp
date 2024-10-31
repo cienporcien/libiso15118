@@ -48,6 +48,9 @@ template <> void convert(const Header& in, iso20_dc_MessageHeaderType& out) {
 
 template <> void convert(const Header& in, iso20_ac_MessageHeaderType& out) {
     init_iso20_ac_MessageHeaderType(&out);
+    convert_header(in, out);
+}
+
 template <> void convert(const Header& in, iso20_acdp_MessageHeaderType& out) {
     init_iso20_acdp_MessageHeaderType(&out);
     convert_header(in, out);

@@ -146,7 +146,7 @@ PeerRequestContext SdpServer::get_peer_request(const bool IsWireless) {
 
     //RDB get the Wireless SDP info
     if (IsWireless) {
-        const uint8_t sdp_request_byte3 = udp_buffer[10];
+        //const uint8_t sdp_request_byte3 = udp_buffer[10];
         const uint8_t sdp_request_byte4 = udp_buffer[11];
         peer_request.p2ps_ppd = static_cast<v2gtp::P2PS_PPD>(sdp_request_byte4);
         const uint8_t sdp_request_byte5 = udp_buffer[12];
@@ -188,8 +188,39 @@ void SdpServer::send_response(const PeerRequestContext& request, const Ipv6EndPo
 
         const auto peer_addr_len = sizeof(request.address);
 
-        return sendto(fd, v2g_packet, sizeof(v2g_packet), 0, reinterpret_cast<const sockaddr*>(&request.address), peer_addr_len);
+        sendto(fd, v2g_packet, sizeof(v2g_packet), 0, reinterpret_cast<const sockaddr*>(&request.address), peer_addr_len);
+    }
+    else {
+        // Add the rest of the wireless info
+        // Next is the DiagStatus (1 byte)
+        // RDB TODO figure out how to do this properly. Is the PPD within the Communications Pairing Space (CPS) for this charger?
+
+        if (IsFinished) {
+            sdp_response[20] =
+                static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::finished_with_EVSEID);
+        } else {
+            sdp_response[20] =
+            static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::ongoing);
+        }
+        // Then the CouplingType
+        uint16_t _coupling_type = static_cast<std::underlying_type_t<v2gtp::CouplingType>>(request.coupling_type);
+        sdp_response[21] = (uint8_t)(_coupling_type & 0xFFu);
+
+        // Finally the EVSEID (36 characters)
+        // We will right justify and pad 0 to the left of a string less than 36 characters, and
+        // take the first 36 characters if more than 36.
+        // RDB TODO do this properly.
+        convert_id(&sdp_response[22], "+49*DEF*E123ABC", 36, "");
+
+        V2GTP20_WriteHeader(v2g_packet, 60, V2GTP20_SDP_RESPONSE_WIRELESS_PAYLOAD_ID);
+
+        const auto peer_addr_len = sizeof(request.address);
+
+        sendto(fd, v2g_packet_wireless, sizeof(v2g_packet_wireless), 0,
+               reinterpret_cast<const sockaddr*>(&request.address), peer_addr_len);
+    }
 }
+
 TlsKeyLoggingServer::TlsKeyLoggingServer(const std::string& interface_name, uint16_t port) {
     static constexpr auto LINK_LOCAL_MULTICAST = "ff02::1";
 
@@ -253,37 +284,6 @@ TlsKeyLoggingServer::~TlsKeyLoggingServer() {
 ssize_t TlsKeyLoggingServer::send(const char* line) {
     return sendto(fd, line, strlen(line), 0, reinterpret_cast<const sockaddr*>(&destination_address),
                   sizeof(destination_address));
-        sendto(fd, v2g_packet_plc, sizeof(v2g_packet_plc), 0, reinterpret_cast<const sockaddr*>(&request.address),
-               peer_addr_len);
-    } else {
-        // Add the rest of the wireless info
-        // Next is the DiagStatus (1 byte)
-        // RDB TODO figure out how to do this properly. Is the PPD within the Communications Pairing Space (CPS) for this charger?
-
-        if (IsFinished) {
-            sdp_response[20] =
-                static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::finished_with_EVSEID);
-        } else {
-            sdp_response[20] =
-            static_cast<std::underlying_type_t<v2gtp::DiagStatus>>(v2gtp::DiagStatus::ongoing);
-        }
-        // Then the CouplingType
-        uint16_t _coupling_type = static_cast<std::underlying_type_t<v2gtp::CouplingType>>(request.coupling_type);
-        sdp_response[21] = (uint8_t)(_coupling_type & 0xFFu);
-
-        // Finally the EVSEID (36 characters)
-        // We will right justify and pad 0 to the left of a string less than 36 characters, and
-        // take the first 36 characters if more than 36.
-        // RDB TODO do this properly.
-        convert_id(&sdp_response[22], "+49*DEF*E123ABC", 36, "");
-
-        V2GTP20_WriteHeader(v2g_packet, 60, V2GTP20_SDP_RESPONSE_WIRELESS_PAYLOAD_ID);
-
-        const auto peer_addr_len = sizeof(request.address);
-
-        sendto(fd, v2g_packet_wireless, sizeof(v2g_packet_wireless), 0,
-               reinterpret_cast<const sockaddr*>(&request.address), peer_addr_len);
-    }
 }
 
 // Converts EVID and EVSEID according to 15118-20:
@@ -298,7 +298,7 @@ void SdpServer::convert_id(uint8_t *out, const std::string in, const int length,
         tstring = defaultID;
     }
     //truncate
-    if (tstring.length() > length)
+    if (tstring.length() > (std::size_t)length)
     {
         tstring.resize(length);
     }
